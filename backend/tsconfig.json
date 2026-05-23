@@ -4,17 +4,12 @@
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
-    "target": "es2022",                          
-    "module": "commonjs",                                
-    "rootDir": "./src",                          
-    "outDir": "./dist",                          
-    "esModuleInterop": true,                             
-    "forceConsistentCasingInFileNames": true,            
+
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    // "module": "nodenext",
-    // "target": "esnext",
-    // "types": [],
+    "module": "nodenext",
+    "target": "esnext",
+    "types": [],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
