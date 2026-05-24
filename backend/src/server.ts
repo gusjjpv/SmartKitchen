@@ -1,11 +1,15 @@
 import express from 'express';
-import userRoutes from './routes/UserRoutes.js';
+import userRoutes from "./routes/UserRoutes.js";
+import restauranteRoutes from "./routes/RestauranteRoutes.js";
+import horarioFuncionamentoRoutes from "./routes/HorarioFuncionamentoRoutes.js";
 import { errorHandler } from './middlewares/errorMiddleware.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(userRoutes);
+app.use(restauranteRoutes);
+app.use(horarioFuncionamentoRoutes);
 
 app.use(errorHandler);
 
