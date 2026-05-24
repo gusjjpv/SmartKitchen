@@ -18,3 +18,51 @@ model User {
   email String @unique
   age Int
 }
+
+model Restaurante {
+  id              String    @id @default(cuid())
+  nome            String    @db.VarChar(255)
+  slug            String    @unique @db.VarChar(255)
+  descricao       String?
+  url_logo        String?
+  
+  // Contato
+  whatsapp        String    @db.VarChar(20)
+  email           String?   @db.VarChar(255)
+  
+  // Endereço
+  rua             String    @db.VarChar(255)
+  numero          String    @db.VarChar(20)
+  bairro          String    @db.VarChar(255)
+  cidade          String    @db.VarChar(100)
+  estado          String?   @db.VarChar(2)
+  cep             String?   @db.VarChar(10)
+  
+  // Controle
+  ativo           Boolean   @default(true)
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  horarios        HorarioFuncionamento[]
+  
+  @@index([slug])
+  @@index([cidade])
+}
+
+model HorarioFuncionamento {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  dia_semana      Int       // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+  horario_abertura String?  @db.VarChar(5)  // "10:30"
+  horario_fechamento String? @db.VarChar(5) // "22:00"
+  fechado         Boolean   @default(false)
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  @@unique([restaurante_id, dia_semana])
+  @@index([restaurante_id])
+}
