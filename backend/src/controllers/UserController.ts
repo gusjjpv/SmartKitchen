@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { prisma } from "../config/prisma.js";
 import { UserService } from "../services/Userservice.js";
 
@@ -10,13 +10,13 @@ export class UserController {
     return res.json(users);
   }
 
-  async store(req: Request, res: Response) {
+  async store(req: Request, res: Response, next: NextFunction) {
     const { name, email, age } = req.body;
     try {
       const user = await userService.createUser(name, email, age);
       return res.status(201).json(user);
     } catch (error) {
-      return res.status(400).json({ error: 'Erro ao criar usuário' });
+      next(error); 
     }
   }
 }
