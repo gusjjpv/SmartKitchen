@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model User { 
@@ -21,22 +21,22 @@ model User {
 
 model Restaurante {
   id              String    @id @default(cuid())
-  nome            String    @db.VarChar(255)
-  slug            String    @unique @db.VarChar(255)
+  nome            String
+  slug            String    @unique
   descricao       String?
-  logo_base64     String?   @db.Text // Base64 da imagem PNG/JPG
+  logo_base64     String?   // Base64 da imagem PNG/JPG
   
   // Contato
-  whatsapp        String    @db.VarChar(20)
-  email           String?   @db.VarChar(255)
+  whatsapp        String
+  email           String?
   
   // Endereço
-  rua             String    @db.VarChar(255)
-  numero          String    @db.VarChar(20)
-  bairro          String    @db.VarChar(255)
-  cidade          String    @db.VarChar(100)
-  estado          String?   @db.VarChar(2)
-  cep             String?   @db.VarChar(10)
+  rua             String
+  numero          String
+  bairro          String
+  cidade          String
+  estado          String?
+  cep             String?
   
   // Controle
   ativo           Boolean   @default(true)
@@ -60,8 +60,8 @@ model HorarioFuncionamento {
   restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
   
   dia_semana      Int       // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-  horario_abertura String?  @db.VarChar(5)  // "10:30"
-  horario_fechamento String? @db.VarChar(5) // "22:00"
+  horario_abertura String?  // "10:30"
+  horario_fechamento String? // "22:00"
   fechado         Boolean   @default(false)
   
   criado_em       DateTime  @default(now())
@@ -76,7 +76,7 @@ model Mesa {
   restaurante_id  String
   restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
   
-  numero          String    @db.VarChar(50)
+  numero          String
   ocupada         Boolean   @default(false)
   qr_code_url     String?   // URL do QR Code gerado
   
@@ -95,7 +95,7 @@ model Categoria {
   restaurante_id  String
   restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
   
-  nome            String    @db.VarChar(255)
+  nome            String
   ordem           Int       @default(0)
   ativo           Boolean   @default(true)
   
@@ -116,10 +116,10 @@ model Produto {
   categoria_id    String
   categoria       Categoria @relation(fields: [categoria_id], references: [id], onDelete: Cascade)
   
-  nome            String    @db.VarChar(255)
-  descricao       String?   @db.Text
-  preco           Decimal   @db.Decimal(10, 2)
-  foto_base64     String?   @db.Text // Base64 da imagem PNG/JPG
+  nome            String
+  descricao       String?
+  preco           Decimal
+  foto_base64     String?   // Base64 da imagem PNG/JPG
   disponivel      Boolean   @default(true)
   
   criado_em       DateTime  @default(now())
@@ -141,7 +141,7 @@ model Pedido {
   mesa            Mesa @relation(fields: [mesa_id], references: [id], onDelete: Cascade)
   
   status          StatusPedido @default(RECEBIDO)
-  total           Decimal   @db.Decimal(10, 2) @default(0)
+  total           Decimal   @default(0)
   
   criado_em       DateTime  @default(now())
   atualizado_em   DateTime  @updatedAt
@@ -159,12 +159,12 @@ model ItemPedido {
   pedido_id       String
   pedido          Pedido @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
   
-  produto_id      String
-  produto         Produto @relation(fields: [produto_id], references: [id], onDelete: SetNull)
+  produto_id      String?
+  produto         Produto? @relation(fields: [produto_id], references: [id], onDelete: SetNull)
   
   quantidade      Int
-  preco_unitario  Decimal   @db.Decimal(10, 2)
-  observacao      String?   @db.Text
+  preco_unitario  Decimal
+  observacao      String?
   
   criado_em       DateTime  @default(now())
   
