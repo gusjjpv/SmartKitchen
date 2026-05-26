@@ -12,15 +12,22 @@ datasource db {
   provider = "sqlite"
 }
 
-model User { 
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  age Int
+model Usuario {
+  id           String   @id @default(uuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  contato      String
+  criado_em    DateTime @default(now())
+  ultimo_login DateTime?
+
+  restaurantes_admin Restaurante[] @relation("AdminRestaurante")
 }
 
 model Restaurante {
   id              String    @id @default(cuid())
+  admin_usuario_id String
+  admin           Usuario   @relation("AdminRestaurante", fields: [admin_usuario_id], references: [id])
   nome            String
   slug            String    @unique
   descricao       String?
@@ -52,6 +59,7 @@ model Restaurante {
   
   @@index([slug])
   @@index([cidade])
+  @@index([admin_usuario_id])
 }
 
 model HorarioFuncionamento {

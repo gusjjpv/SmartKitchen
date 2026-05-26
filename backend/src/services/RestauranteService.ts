@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma.js";
 
 interface CriarRestauranteDTO {
+  admin_usuario_id: string;
   nome: string;
   slug: string;
   descricao?: string;
@@ -17,6 +18,7 @@ interface CriarRestauranteDTO {
 }
 
 interface AtualizarRestauranteDTO {
+  admin_usuario_id?: string;
   nome?: string;
   slug?: string;
   descricao?: string;
@@ -71,6 +73,7 @@ export class RestauranteService {
 
   async criar(dados: CriarRestauranteDTO) {
     const data = {
+      admin_usuario_id: dados.admin_usuario_id,
       nome: dados.nome,
       slug: dados.slug,
       whatsapp: dados.whatsapp,
@@ -98,6 +101,9 @@ export class RestauranteService {
 
   async atualizar(id: string, dados: AtualizarRestauranteDTO) {
     const data = {
+      ...(dados.admin_usuario_id !== undefined
+        ? { admin_usuario_id: dados.admin_usuario_id }
+        : {}),
       ...(dados.nome !== undefined ? { nome: dados.nome } : {}),
       ...(dados.slug !== undefined ? { slug: dados.slug } : {}),
       ...(dados.descricao !== undefined ? { descricao: dados.descricao } : {}),

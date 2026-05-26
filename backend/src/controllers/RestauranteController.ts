@@ -85,12 +85,18 @@ export class RestauranteController {
         ativo,
       } = req.body;
       const slug = obterTexto(req.body?.slug);
+      const admin_usuario_id = obterTexto(req.body?.admin_usuario_id);
 
       // TODO: Adicionar validação com middleware
 
       // Verificar se slug já existe
       if (!slug) {
         return res.status(400).json({ erro: "Slug é obrigatório" });
+      }
+      if (!admin_usuario_id) {
+        return res
+          .status(400)
+          .json({ erro: "Admin do restaurante é obrigatório" });
       }
       const slugExistente = await restauranteService.verificarSlugExistente(
         slug
@@ -100,6 +106,7 @@ export class RestauranteController {
       }
 
       const restaurante = await restauranteService.criar({
+        admin_usuario_id,
         nome,
         slug,
         descricao,
@@ -142,6 +149,7 @@ export class RestauranteController {
         ativo,
       } = req.body;
       const slug = obterTexto(req.body?.slug);
+      const admin_usuario_id = obterTexto(req.body?.admin_usuario_id);
 
       // Verificar se restaurante existe
       const restauranteExistente =
@@ -162,6 +170,7 @@ export class RestauranteController {
       }
 
       const dadosAtualizacao = {
+        ...(admin_usuario_id !== undefined ? { admin_usuario_id } : {}),
         ...(nome !== undefined ? { nome } : {}),
         ...(slug !== undefined ? { slug } : {}),
         ...(descricao !== undefined ? { descricao } : {}),
