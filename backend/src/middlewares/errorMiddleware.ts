@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { AppError } from '../errors/AppError.js';
 
 export function errorHandler(
   error: any, 
@@ -8,14 +9,19 @@ export function errorHandler(
 ) {
   console.error('[ERROR LOG]:', error.message || error);
 
-  if (error.code === 'P2002') {
-    return res.status(400).json({
-      message: 'Este dado já está cadastrado no sistema (Conflito).',
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      erro: error.message,
     });
   }
 
-  // Resposta genérica para qualquer outro erro
+  if (error.code === 'P2002') {
+    return res.status(400).json({
+      erro: 'Este dado já está cadastrado no sistema.',
+    });
+  }
+
   return res.status(500).json({
-    message: 'Ocorreu um erro interno no servidor.',
+    erro: 'Ocorreu um erro interno no servidor.',
   });
 }
