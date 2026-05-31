@@ -25,6 +25,7 @@ out/
 
 # Prisma
 prisma/migrations/
+*.db
 
 # Documentation (project planning)
 docs/
@@ -38,4 +39,6 @@ tmp/
 temp/
 *.tmp
 
+# IA
 .github
+

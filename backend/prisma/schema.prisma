@@ -1,8 +1,188 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Usuario {
+  id           String   @id @default(uuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  contato      String
+  criado_em    DateTime @default(now())
+  ultimo_login DateTime?
+
+  restaurantes_admin Restaurante[] @relation("AdminRestaurante")
+}
+
+model Restaurante {
+  id              String    @id @default(cuid())
+  admin_usuario_id String
+  admin           Usuario   @relation("AdminRestaurante", fields: [admin_usuario_id], references: [id])
+  nome            String
+  slug            String    @unique
+  descricao       String?
+  logo_base64     String?   // Base64 da imagem PNG/JPG
+  
+  // Contato
+  whatsapp        String
+  email           String?
+  
+  // Endereço
+  rua             String
+  numero          String
+  bairro          String
+  cidade          String
+  estado          String?
+  cep             String?
+  
+  // Controle
+  ativo           Boolean   @default(true)
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  horarios        HorarioFuncionamento[]
+  mesas           Mesa[]
+  categorias      Categoria[]
+  produtos        Produto[]
+  pedidos         Pedido[]
+  
+  @@index([slug])
+  @@index([cidade])
+  @@index([admin_usuario_id])
+}
+
+model HorarioFuncionamento {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  dia_semana      Int       // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+  horario_abertura String?  // "10:30"
+  horario_fechamento String? // "22:00"
+  fechado         Boolean   @default(false)
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  @@unique([restaurante_id, dia_semana])
+  @@index([restaurante_id])
+}
+
+model Mesa {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  numero          String
+  ocupada         Boolean   @default(false)
+  qr_code_url     String?   // URL do QR Code gerado
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  pedidos         Pedido[]
+  
+  @@unique([restaurante_id, numero])
+  @@index([restaurante_id])
+}
+
+model Categoria {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  nome            String
+  ordem           Int       @default(0)
+  ativo           Boolean   @default(true)
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  produtos        Produto[]
+  
+  @@index([restaurante_id])
+}
+
+model Produto {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  categoria_id    String
+  categoria       Categoria @relation(fields: [categoria_id], references: [id], onDelete: Cascade)
+  
+  nome            String
+  descricao       String?
+  preco           Decimal
+  foto_base64     String?   // Base64 da imagem PNG/JPG
+  disponivel      Boolean   @default(true)
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  itens_pedido    ItemPedido[]
+  
+  @@index([restaurante_id])
+  @@index([categoria_id])
+}
+
+model Pedido {
+  id              String    @id @default(cuid())
+  restaurante_id  String
+  restaurante     Restaurante @relation(fields: [restaurante_id], references: [id], onDelete: Cascade)
+  
+  mesa_id         String
+  mesa            Mesa @relation(fields: [mesa_id], references: [id], onDelete: Cascade)
+  
+  status          StatusPedido @default(RECEBIDO)
+  total           Decimal   @default(0)
+  
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  
+  // Relations
+  itens           ItemPedido[]
+  
+  @@index([restaurante_id])
+  @@index([mesa_id])
+  @@index([status])
+}
+
+model ItemPedido {
+  id              String    @id @default(cuid())
+  pedido_id       String
+  pedido          Pedido @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  
+  produto_id      String?
+  produto         Produto? @relation(fields: [produto_id], references: [id], onDelete: SetNull)
+  
+  quantidade      Int
+  preco_unitario  Decimal
+  observacao      String?
+  
+  criado_em       DateTime  @default(now())
+  
+  @@index([pedido_id])
+  @@index([produto_id])
+}
+
+enum StatusPedido {
+  RECEBIDO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
 }

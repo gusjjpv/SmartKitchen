@@ -9,7 +9,7 @@ git clone https://github.com/gusjjpv/SmartKitchen.git
 cd SmartKitchen
 ```
 
-### 2. Configurando o Backend
+### 2. Configurando o Backend (primeira vez)
 
 1. Entre na pasta do backend e instale as dependências:
 ```bash
@@ -23,15 +23,11 @@ npm install
 
 
 ```env
-# String de conexão com o PostgreSQL
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_do_banco?schema=public"
-
-# Conexão com o Redis (se aplicável)
-REDIS_URL="redis://localhost:6379"
+# String de conexão com o SQLite (Prisma)
+DATABASE_URL="file:./smartkitchen.db"
 
 # Porta onde a API vai rodar
-PORT=3333
-
+PORT=
 ```
 
 
@@ -40,13 +36,17 @@ PORT=3333
 npx prisma migrate dev
 ```
 
+> Se voce precisar reiniciar o banco local do zero, use:
+> ```bash
+> npx prisma migrate reset
+> ```
 
 4. Inicie o servidor em modo de desenvolvimento:
 ```bash
 npm run dev
 ```
 
-> A API estará rodando por padrão em `http://localhost:3333`
+> A API estará rodando por padrão em `http://localhost:3000`
 ---
 
 ### 3. Configurando o Frontend
@@ -64,6 +64,4 @@ npm run dev
 ```
 
 
-> O painel web estará disponível no endereço indicado no terminal (geralmente `http://localhost:5173`)
-
-
+> O painel web estará disponível no endereço indicado no terminal
