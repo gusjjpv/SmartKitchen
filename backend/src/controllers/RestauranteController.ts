@@ -11,6 +11,42 @@ const obterTexto = (valor: unknown): string | undefined => {
   return undefined;
 };
 
+const LIMITE_LOGO_BYTES = 2 * 1024 * 1024;
+
+const extrairBase64 = (valor: string): { base64?: string; erro?: string } => {
+  if (valor.startsWith("data:")) {
+    const match = valor.match(/^data:.*;base64,(.+)$/);
+    if (!match) {
+      return { erro: "logo_base64 invalida" };
+    }
+    return { base64: match[1] };
+  }
+
+  const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+  if (base64Regex.test(valor)) {
+    return { base64: valor };
+  }
+
+  return {};
+};
+
+const validarLogoBase64 = (valor: unknown): string | null => {
+  if (valor === undefined || valor === null) return null;
+  if (typeof valor !== "string") return "logo_base64 invalida";
+  if (!valor.trim()) return "logo_base64 invalida";
+
+  const { base64, erro } = extrairBase64(valor);
+  if (erro) return erro;
+  if (!base64) return null;
+
+  const tamanhoBytes = Buffer.from(base64, "base64").length;
+  if (tamanhoBytes > LIMITE_LOGO_BYTES) {
+    return "Logo excede 2mb";
+  }
+
+  return null;
+};
+
 export class RestauranteController {
   async index(req: Request, res: Response, next: NextFunction) {
     try {
@@ -105,6 +141,11 @@ export class RestauranteController {
         return res.status(400).json({ erro: "Slug já está em uso" });
       }
 
+      const erroLogo = validarLogoBase64(logo_base64);
+      if (erroLogo) {
+        return res.status(400).json({ erro: erroLogo });
+      }
+
       const restaurante = await restauranteService.criar({
         admin_usuario_id,
         nome,
@@ -167,6 +208,11 @@ export class RestauranteController {
         if (slugExistente) {
           return res.status(400).json({ erro: "Slug já está em uso" });
         }
+      }
+
+      const erroLogo = validarLogoBase64(logo_base64);
+      if (erroLogo) {
+        return res.status(400).json({ erro: erroLogo });
       }
 
       const dadosAtualizacao = {
