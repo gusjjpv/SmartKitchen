@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { Save, Building2, MapPin, Loader2 } from 'lucide-react'
 
 const restauranteSchema = z.object({
+  admin_usuario_id: z.string().min(1, 'Admin é obrigatório'),
   nome: z.string().min(1, 'Nome é obrigatório'),
   descricao: z.string().optional(),
   whatsapp: z.string().min(10, 'WhatsApp inválido'),
@@ -41,8 +42,9 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
   } = useForm<RestauranteFormData>({
     resolver: zodResolver(restauranteSchema),
     defaultValues: {
-      nome: '',
-      descricao: '',
+        admin_usuario_id: '',
+        nome: '',
+        descricao: '',
       whatsapp: '',
       email: '',
       rua: '',
@@ -57,6 +59,7 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
   useEffect(() => {
     if (restaurante) {
       reset({
+        admin_usuario_id: restaurante.admin_usuario_id,
         nome: restaurante.nome,
         descricao: restaurante.descricao ?? '',
         whatsapp: restaurante.whatsapp,
@@ -92,6 +95,18 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
                 value={logoBase64}
                 onChange={(v) => setLogoBase64(v)}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="admin_usuario_id">Admin (ID do usuario) *</Label>
+              <Input
+                id="admin_usuario_id"
+                {...register('admin_usuario_id')}
+                placeholder="UUID do usuario admin"
+              />
+              {errors.admin_usuario_id && (
+                <p className="text-xs text-destructive">{errors.admin_usuario_id.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">

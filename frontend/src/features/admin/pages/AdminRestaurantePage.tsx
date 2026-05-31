@@ -36,6 +36,7 @@ export function AdminRestaurantePage() {
 
   async function handleSave(data: {
     logo_base64?: string | null
+    admin_usuario_id: string
     nome: string
     descricao?: string
     whatsapp: string

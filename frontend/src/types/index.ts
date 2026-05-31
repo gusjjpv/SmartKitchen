@@ -1,5 +1,6 @@
 export interface Restaurante {
   id: string
+  admin_usuario_id: string
   nome: string
   slug: string
   descricao: string | null
@@ -19,6 +20,7 @@ export interface Restaurante {
 }
 
 export interface CriarRestauranteDTO {
+  admin_usuario_id: string
   nome: string
   slug: string
   descricao?: string
