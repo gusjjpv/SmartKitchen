@@ -2,32 +2,34 @@ import { useNavigate } from 'react-router-dom'
 import { useListarRestaurantes } from '@/hooks/useRestaurante'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Loader2, Plus, Store, MapPin, Phone, Pencil, UtensilsCrossed } from 'lucide-react'
+import { Plus, Store, MapPin, Phone, Pencil, Building2 } from 'lucide-react'
 import type { Restaurante } from '@/types'
 
 function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
   const navigate = useNavigate()
 
   return (
-    <Card className="border-l-4 border-l-laranja shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-      <CardContent className="pt-6">
+    <Card className="group border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-laranja/30 hover:shadow-xl hover:shadow-laranja/5 hover:-translate-y-0.5">
+      <CardContent className="p-5">
         <div className="flex items-start gap-4">
           {restaurante.logo_base64 ? (
-            <img
-              src={restaurante.logo_base64}
-              alt={restaurante.nome}
-              className="size-16 shrink-0 rounded-xl border object-cover"
-            />
+            <div className="relative shrink-0">
+              <img
+                src={restaurante.logo_base64}
+                alt={restaurante.nome}
+                className="size-16 rounded-xl border border-border/50 object-cover shadow-sm"
+              />
+            </div>
           ) : (
-            <div className="flex size-16 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30">
-              <UtensilsCrossed className="size-6 text-muted-foreground/40" />
+            <div className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted/30">
+              <Building2 className="size-7 text-muted-foreground/30" />
             </div>
           )}
 
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-foreground truncate">{restaurante.nome}</h3>
+                <h3 className="font-semibold text-foreground truncate group-hover:text-laranja transition-colors">{restaurante.nome}</h3>
                 <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                   <MapPin className="size-3 shrink-0" />
                   {restaurante.cidade}{restaurante.estado ? `, ${restaurante.estado}` : ''}
@@ -36,8 +38,8 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
               <span
                 className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
                   restaurante.ativo
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                    : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
+                    ? 'bg-verde/10 text-verde'
+                    : 'bg-destructive/10 text-destructive'
                 }`}
               >
                 {restaurante.ativo ? 'Ativo' : 'Inativo'}
@@ -45,7 +47,7 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
             </div>
 
             {restaurante.descricao && (
-              <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{restaurante.descricao}</p>
+              <p className="mt-2 line-clamp-2 text-xs text-muted-foreground/80">{restaurante.descricao}</p>
             )}
 
             <div className="mt-3 flex items-center justify-between gap-2">
@@ -53,7 +55,7 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
                 href={`https://wa.me/${restaurante.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-verde hover:text-verde/80 hover:underline"
+                className="inline-flex items-center gap-1 text-xs text-verde hover:text-verde/80 hover:underline transition-colors"
               >
                 <Phone className="size-3" />
                 {restaurante.whatsapp}
@@ -62,7 +64,7 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 gap-1 text-xs"
+                className="h-7 gap-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => navigate(`/admin?id=${restaurante.id}`)}
               >
                 <Pencil className="size-3" />
@@ -76,16 +78,39 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
   )
 }
 
+function SkeletonCard() {
+  return (
+    <div className="rounded-xl border border-border/50 bg-card/30 p-5 animate-pulse">
+      <div className="flex items-start gap-4">
+        <div className="size-16 rounded-xl bg-muted/50" />
+        <div className="flex-1 space-y-3">
+          <div className="h-4 w-3/4 rounded bg-muted/50" />
+          <div className="h-3 w-1/2 rounded bg-muted/30" />
+          <div className="h-3 w-full rounded bg-muted/30" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function RestauranteListPage() {
   const navigate = useNavigate()
   const { data: restaurantes, isLoading } = useListarRestaurantes()
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="size-8 animate-spin text-laranja" />
-          <p className="text-sm text-muted-foreground">Carregando restaurantes...</p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <div className="h-8 w-48 rounded-lg bg-muted/50 animate-pulse" />
+            <div className="h-4 w-32 rounded bg-muted/30 animate-pulse" />
+          </div>
+          <div className="h-9 w-36 rounded-md bg-muted/50 animate-pulse" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
       </div>
     )
@@ -94,15 +119,15 @@ export function RestauranteListPage() {
   const temRestaurantes = restaurantes && restaurantes.length > 0
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 py-10">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-xl bg-laranja/10 shadow-sm">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="hidden sm:flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-laranja/20 to-laranja/5 shadow-sm">
             <Store className="size-6 text-laranja" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Restaurantes</h1>
-            <p className="text-sm text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Restaurantes</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">
               {temRestaurantes
                 ? `${restaurantes!.length} restaurante${restaurantes!.length > 1 ? 's' : ''} cadastrado${restaurantes!.length > 1 ? 's' : ''}`
                 : 'Nenhum restaurante cadastrado'}
@@ -110,7 +135,7 @@ export function RestauranteListPage() {
           </div>
         </div>
 
-        <Button size="sm" onClick={() => navigate('/admin')}>
+        <Button size="default" className="w-full sm:w-auto h-10 sm:h-9" onClick={() => navigate('/admin')}>
           <Plus className="size-4" />
           Novo Restaurante
         </Button>
@@ -123,11 +148,13 @@ export function RestauranteListPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/20 py-20">
-          <Store className="mb-4 size-12 text-muted-foreground/30" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/50 bg-muted/10 py-20">
+          <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted/30">
+            <Store className="size-8 text-muted-foreground/30" />
+          </div>
           <p className="text-sm font-medium text-muted-foreground">Nenhum restaurante cadastrado</p>
           <p className="mt-1 text-xs text-muted-foreground/60">Crie seu primeiro restaurante para começar</p>
-          <Button className="mt-6" onClick={() => navigate('/admin')}>
+          <Button className="mt-6 shadow-lg shadow-laranja/20" onClick={() => navigate('/admin')}>
             <Plus className="size-4" />
             Criar primeiro restaurante
           </Button>

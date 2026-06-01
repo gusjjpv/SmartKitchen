@@ -82,7 +82,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="size-6 animate-spin text-laranja" />
+        <div className="size-6 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
       </div>
     )
   }
@@ -91,8 +91,10 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
 
   return (
     <div className="space-y-3">
-      <div className="mb-4 flex items-center gap-2">
-        <Clock className="size-4 text-verde" />
+      <div className="mb-4 flex items-center gap-2.5">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-verde/10">
+          <Clock className="size-4 text-verde" />
+        </div>
         <p className="text-sm text-muted-foreground">
           {hasAnyData
             ? 'Ajuste os horários de cada dia e salve individualmente'
@@ -107,11 +109,11 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
           || dia.horario_fechamento !== (horarios?.find((h) => h.dia_semana === dia.dia_semana)?.horario_fechamento ?? '')
 
         return (
-          <Card key={dia.dia_semana} className="transition-shadow hover:shadow-sm">
-            <CardContent className="flex flex-wrap items-center gap-4 pt-6">
-              <div className="flex min-w-[8rem] items-center gap-2">
-                <div className={`size-2 rounded-full ${dia.fechado ? 'bg-destructive' : 'bg-verde'}`} />
-                <span className="text-sm font-medium">{DIAS_SEMANA[dia.dia_semana]}</span>
+          <Card key={dia.dia_semana} className="border border-border/50 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-border/80">
+            <CardContent className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4 p-4 sm:p-5">
+              <div className="flex min-w-[8rem] items-center gap-2.5">
+                <div className={`size-2.5 rounded-full ${dia.fechado ? 'bg-destructive' : 'bg-verde'}`} />
+                <span className="text-sm font-medium text-foreground">{DIAS_SEMANA[dia.dia_semana]}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -134,15 +136,15 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
                   value={dia.horario_abertura}
                   onChange={(e) => updateDia(dia.dia_semana, { horario_abertura: e.target.value })}
                   disabled={dia.fechado}
-                  className="w-32"
+                  className="w-28 sm:w-32 h-8 text-xs"
                 />
-                <span className="text-muted-foreground">até</span>
+                <span className="text-muted-foreground text-xs">até</span>
                 <Input
                   type="time"
                   value={dia.horario_fechamento}
                   onChange={(e) => updateDia(dia.dia_semana, { horario_fechamento: e.target.value })}
                   disabled={dia.fechado}
-                  className="w-32"
+                  className="w-28 sm:w-32 h-8 text-xs"
                 />
               </div>
 
@@ -152,7 +154,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
                 size="sm"
                 onClick={() => salvarDia(dia)}
                 disabled={isSaving || !isChanged}
-                className="ml-auto"
+                className="ml-auto w-full sm:w-auto h-8 text-xs"
               >
                 {isSaving ? <Loader2 className="size-3 animate-spin" /> : <Save className="size-3" />}
                 {isSaving ? 'Salvando...' : 'Salvar'}

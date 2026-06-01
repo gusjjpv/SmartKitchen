@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DadosRestauranteForm } from '../components/DadosRestauranteForm'
 import { HorariosEditor } from '../components/HorariosEditor'
+import { CardapioEditor } from '../components/CardapioEditor'
 import { useListarRestaurantes, useCriarRestaurante, useAtualizarRestaurante } from '@/hooks/useRestaurante'
 import type { CriarRestauranteDTO } from '@/types'
 import { toast } from 'sonner'
-import { Loader2, Plus, Store, UtensilsCrossed, ArrowLeft } from 'lucide-react'
+import { Plus, Store, ArrowLeft, UtensilsCrossed, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function AdminRestaurantePage() {
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const { data: restaurantes, isLoading: isLoadingLista } = useListarRestaurantes()
   const criarMutation = useCriarRestaurante()
   const atualizarMutation = useAtualizarRestaurante()
@@ -56,10 +57,9 @@ export function AdminRestaurantePage() {
         await atualizarMutation.mutateAsync({ id: restaurante.id, dto: payload })
         toast.success('Restaurante atualizado com sucesso!')
       } else {
-        const novo = await criarMutation.mutateAsync(payload as CriarRestauranteDTO)
-        setSearchParams({ id: novo.id }, { replace: true })
-        setCriandoNovo(false)
+        await criarMutation.mutateAsync(payload as CriarRestauranteDTO)
         toast.success('Restaurante criado com sucesso!')
+        navigate('/restaurantes')
       }
     } catch (err) {
       const axiosError = err as { response?: { data?: { message?: string } } } | undefined
@@ -77,25 +77,25 @@ export function AdminRestaurantePage() {
     return (
       <div className="flex items-center justify-center py-24">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="size-8 animate-spin text-laranja" />
-          <p className="text-sm text-muted-foreground">Carregando...</p>
+          <div className="size-8 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
+          <p className="text-sm text-muted-foreground animate-pulse">Carregando...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 py-10">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-xl bg-laranja/10 shadow-sm">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="hidden sm:flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-laranja/20 to-laranja/5 shadow-sm">
             <Store className="size-6 text-laranja" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
               {restaurante ? restaurante.nome : 'Novo Restaurante'}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">
               {restaurante
                 ? 'Edite as informações do seu restaurante'
                 : 'Cadastre seu restaurante para começar'}
@@ -110,22 +110,29 @@ export function AdminRestaurantePage() {
           </Button>
 
           {restaurante && (
-            <Button variant="secondary" size="sm" onClick={handleCriarNovo}>
+            <Button variant="secondary" size="sm" onClick={handleCriarNovo} className="h-9 sm:h-8">
               <Plus className="size-4" />
-              Novo Restaurante
+              <span className="hidden sm:inline">Novo</span>
             </Button>
           )}
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start rounded-xl bg-gradient-to-r from-areia/30 to-transparent">
-          <TabsTrigger value="dados" className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none">
-            <UtensilsCrossed className="mr-1.5 size-4" />
-            Dados do Restaurante
+        <TabsList className="w-full justify-start rounded-xl bg-muted/30 p-1 gap-0.5 overflow-x-auto">
+          <TabsTrigger value="dados" className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+            <UtensilsCrossed className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
+            <span className="hidden sm:inline">Dados do Restaurante</span>
+            <span className="sm:hidden">Dados</span>
           </TabsTrigger>
-          <TabsTrigger value="horarios" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none">
-            Horários de Funcionamento
+          <TabsTrigger value="horarios" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+            <Clock className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
+            <span className="hidden sm:inline">Horários</span>
+            <span className="sm:hidden">Horários</span>
+          </TabsTrigger>
+          <TabsTrigger value="cardapio" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+            <Store className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
+            Cardápio
           </TabsTrigger>
         </TabsList>
 
@@ -140,6 +147,10 @@ export function AdminRestaurantePage() {
 
         <TabsContent value="horarios" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <HorariosEditor restauranteId={restaurante.id} />}
+        </TabsContent>
+
+        <TabsContent value="cardapio" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+          {restaurante && <CardapioEditor restauranteId={restaurante.id} />}
         </TabsContent>
       </Tabs>
     </div>

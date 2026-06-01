@@ -49,13 +49,13 @@ export function LogoUpload({ value, onChange }: LogoUploadProps) {
           <img
             src={value}
             alt="Logo"
-            className="h-28 w-28 rounded-xl border-2 border-areia object-cover shadow-sm transition-shadow group-hover:shadow-md"
+            className="h-28 w-28 rounded-xl border-2 border-border/50 bg-card object-cover shadow-lg transition-shadow group-hover:shadow-xl"
           />
           <Button
             type="button"
             variant="secondary"
             size="icon"
-            className="absolute -top-2 -right-2 size-6 rounded-full shadow-sm opacity-80 hover:opacity-100"
+            className="absolute -top-2 -right-2 size-6 rounded-full shadow-md opacity-80 hover:opacity-100 transition-opacity"
             onClick={handleRemove}
           >
             <X className="size-3" />
@@ -88,10 +88,10 @@ export function LogoUpload({ value, onChange }: LogoUploadProps) {
           </div>
 
           {!mode && (
-            <div className="flex h-28 w-28 items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30">
+            <div className="flex h-28 w-28 items-center justify-center rounded-xl border-2 border-dashed border-border/50 bg-muted/20">
               <div className="text-center">
-                <ImageIcon className="mx-auto mb-1 size-6 text-muted-foreground/50" />
-                <p className="text-xs text-muted-foreground/50">Nenhuma logo</p>
+                <ImageIcon className="mx-auto mb-1 size-6 text-muted-foreground/40" />
+                <p className="text-xs text-muted-foreground/40">Nenhuma logo</p>
               </div>
             </div>
           )}

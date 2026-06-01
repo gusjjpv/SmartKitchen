@@ -10,6 +10,7 @@ import { LogoUpload } from './LogoUpload'
 import type { Restaurante } from '@/types'
 import { useEffect, useState } from 'react'
 import { Save, Building2, MapPin, Loader2 } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 
 const restauranteSchema = z.object({
   admin_usuario_id: z.string().min(1, 'Admin é obrigatório'),
@@ -56,6 +57,8 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
     },
   })
 
+  const { user } = useAuth()
+
   useEffect(() => {
     if (restaurante) {
       reset({
@@ -71,8 +74,10 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
         estado: restaurante.estado ?? '',
         cep: restaurante.cep ?? '',
       })
+    } else if (user) {
+      reset((prev) => ({ ...prev, admin_usuario_id: user.id }))
     }
-  }, [restaurante, reset])
+  }, [restaurante, reset, user])
 
   const [logoBase64, setLogoBase64] = useState<string | null>(restaurante?.logo_base64 ?? null)
 
@@ -82,12 +87,13 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identificação */}
-      <Card className="border-l-4 border-l-laranja shadow-sm transition-shadow hover:shadow-md">
-        <CardContent className="pt-6">
-          <div className="mb-4 flex items-center gap-2">
-            <Building2 className="size-4 text-laranja" />
-            <h3 className="text-sm font-semibold text-marrom">Identificação</h3>
+      <Card className="border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-200 hover:border-laranja/20">
+        <CardContent className="p-5 sm:p-6">
+          <div className="mb-5 flex items-center gap-2.5">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-laranja/10">
+              <Building2 className="size-4 text-laranja" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground">Identificação</h3>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2 sm:col-span-2">
@@ -97,16 +103,8 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="admin_usuario_id">Admin (ID do usuario) *</Label>
-              <Input
-                id="admin_usuario_id"
-                {...register('admin_usuario_id')}
-                placeholder="UUID do usuario admin"
-              />
-              {errors.admin_usuario_id && (
-                <p className="text-xs text-destructive">{errors.admin_usuario_id.message}</p>
-              )}
+            <div className="hidden">
+              <Input id="admin_usuario_id" {...register('admin_usuario_id')} readOnly />
             </div>
 
             <div className="space-y-2">
@@ -135,12 +133,13 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
         </CardContent>
       </Card>
 
-      {/* Endereço */}
-      <Card className="border-l-4 border-l-verde shadow-sm transition-shadow hover:shadow-md">
-        <CardContent className="pt-6">
-          <div className="mb-4 flex items-center gap-2">
-            <MapPin className="size-4 text-verde" />
-            <h3 className="text-sm font-semibold text-marrom">Endereço</h3>
+      <Card className="border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-200 hover:border-verde/20">
+        <CardContent className="p-5 sm:p-6">
+          <div className="mb-5 flex items-center gap-2.5">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-verde/10">
+              <MapPin className="size-4 text-verde" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground">Endereço</h3>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
