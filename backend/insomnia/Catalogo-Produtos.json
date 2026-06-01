@@ -1,0 +1,339 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-06-01T00:00:00.000Z",
+  "__export_source": "opencode",
+  "resources": [
+    {
+      "_id": "__WORKSPACE__",
+      "_type": "workspace",
+      "name": "SmartKitchen - Catalogo de Produtos",
+      "scope": "collection",
+      "description": "### Instrucoes de uso\n\n1. Execute os requests da pasta **Setup** em ordem para criar usuario e restaurante\n2. Copie os IDs retornados para as variaveis de ambiente (icone de olho no canto superior direito)\n3. Execute os requests de Categorias e Produtos normalmente"
+    },
+    {
+      "_id": "__ENV__",
+      "_type": "environment",
+      "parentId": "__WORKSPACE__",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "usuario_id": "",
+        "restaurante_id": "",
+        "categoria_id": "",
+        "produto_id": "",
+        "outro_restaurante_id": "id-que-nao-existe"
+      }
+    },
+    {
+      "_id": "fld_setup",
+      "_type": "request_group",
+      "parentId": "__WORKSPACE__",
+      "name": "Setup (criar dados base)",
+      "description": "Execute em ordem para criar usuario e restaurante. Depois copie os IDs para as variaveis de ambiente."
+    },
+    {
+      "_id": "fld_categorias",
+      "_type": "request_group",
+      "parentId": "__WORKSPACE__",
+      "name": "Categorias",
+      "description": "CRUD de categorias com escopo por restaurante"
+    },
+    {
+      "_id": "fld_produtos",
+      "_type": "request_group",
+      "parentId": "__WORKSPACE__",
+      "name": "Produtos",
+      "description": "CRUD de produtos com escopo por restaurante e validacao de categoria"
+    },
+    {
+      "_id": "fld_erros_cat",
+      "_type": "request_group",
+      "parentId": "fld_categorias",
+      "name": "Erros (validacao)",
+      "description": "Testes de erro para categorias"
+    },
+    {
+      "_id": "fld_erros_prod",
+      "_type": "request_group",
+      "parentId": "fld_produtos",
+      "name": "Erros (validacao)",
+      "description": "Testes de erro para produtos"
+    },
+    {
+      "_id": "req_setup_user",
+      "_type": "request",
+      "parentId": "fld_setup",
+      "name": "1. Criar usuario",
+      "method": "POST",
+      "url": "{{ base_url }}/cadastro",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Admin Teste\",\n  \"email\": \"admin{{ $randomInt }}\",\n  \"senha\": \"123456\",\n  \"contato\": \"11999999999\"\n}"
+      },
+      "parameters": [],
+      "description": "Resposta contem o id do usuario. Copie para a variavel {{ usuario_id }}"
+    },
+    {
+      "_id": "req_setup_rest",
+      "_type": "request",
+      "parentId": "fld_setup",
+      "name": "2. Criar restaurante",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"admin_usuario_id\": \"{{ usuario_id }}\",\n  \"nome\": \"Meu Restaurante\",\n  \"slug\": \"meu-rest-{{ $randomInt }}\",\n  \"whatsapp\": \"11999999999\",\n  \"rua\": \"Rua A\",\n  \"numero\": \"123\",\n  \"bairro\": \"Centro\",\n  \"cidade\": \"Sao Paulo\"\n}"
+      },
+      "parameters": [],
+      "description": "Resposta contem o id do restaurante. Copie para a variavel {{ restaurante_id }}"
+    },
+    {
+      "_id": "req_cat_listar",
+      "_type": "request",
+      "parentId": "fld_categorias",
+      "name": "Listar categorias",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_cat_criar",
+      "_type": "request",
+      "parentId": "fld_categorias",
+      "name": "Criar categoria",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Bebidas\",\n  \"ordem\": 1\n}"
+      },
+      "parameters": [],
+      "description": "Resposta contem o id da categoria. Copie para a variavel {{ categoria_id }}"
+    },
+    {
+      "_id": "req_cat_buscar",
+      "_type": "request",
+      "parentId": "fld_categorias",
+      "name": "Buscar categoria por ID",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias/{{ categoria_id }}",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_cat_atualizar",
+      "_type": "request",
+      "parentId": "fld_categorias",
+      "name": "Atualizar categoria",
+      "method": "PUT",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias/{{ categoria_id }}",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Bebidas e Drinks\",\n  \"ordem\": 2\n}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_cat_deletar",
+      "_type": "request",
+      "parentId": "fld_categorias",
+      "name": "Deletar categoria",
+      "method": "DELETE",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias/{{ categoria_id }}",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_cat_erro_outro_rest",
+      "_type": "request",
+      "parentId": "fld_erros_cat",
+      "name": "Buscar categoria de OUTRO restaurante (404)",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ outro_restaurante_id }}/categorias/{{ categoria_id }}",
+      "headers": [],
+      "parameters": [],
+      "description": "Esperado: 404 { \"erro\": \"Categoria nao encontrado(a)\" }"
+    },
+    {
+      "_id": "req_cat_erro_sem_nome",
+      "_type": "request",
+      "parentId": "fld_erros_cat",
+      "name": "Criar categoria sem nome (400)",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "description": "Esperado: 400 { \"erro\": \"Nome e obrigatorio\" }"
+    },
+    {
+      "_id": "req_prod_criar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Criar produto",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"categoria_id\": \"{{ categoria_id }}\",\n  \"nome\": \"Coca-Cola 350ml\",\n  \"descricao\": \"Refrigerante de cola\",\n  \"preco\": 5.50,\n  \"disponivel\": true\n}"
+      },
+      "parameters": [],
+      "description": "Resposta contem o id do produto. Copie para a variavel {{ produto_id }}"
+    },
+    {
+      "_id": "req_prod_listar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Listar produtos",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_prod_listar_por_cat",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Listar produtos por categoria",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/categorias/{{ categoria_id }}/produtos",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_prod_buscar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Buscar produto por ID",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos/{{ produto_id }}",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_prod_atualizar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Atualizar produto",
+      "method": "PUT",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos/{{ produto_id }}",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Coca-Cola Lata\",\n  \"descricao\": \"Refrigerante de cola - 350ml\",\n  \"preco\": 6.00\n}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_prod_deletar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Deletar produto",
+      "method": "DELETE",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos/{{ produto_id }}",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_prod_filtrar",
+      "_type": "request",
+      "parentId": "fld_produtos",
+      "name": "Listar produtos com filtro de categoria",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [],
+      "parameters": [
+        {
+          "name": "categoria_id",
+          "value": "{{ categoria_id }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_prod_erro_outro_rest",
+      "_type": "request",
+      "parentId": "fld_erros_prod",
+      "name": "Buscar produto de OUTRO restaurante (404)",
+      "method": "GET",
+      "url": "{{ base_url }}/restaurantes/{{ outro_restaurante_id }}/produtos/{{ produto_id }}",
+      "headers": [],
+      "parameters": [],
+      "description": "Esperado: 404 { \"erro\": \"Produto nao encontrado(a)\" }"
+    },
+    {
+      "_id": "req_prod_erro_cat_outro_rest",
+      "_type": "request",
+      "parentId": "fld_erros_prod",
+      "name": "Produto com categoria de OUTRO restaurante (400)",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"categoria_id\": \"id-de-categoria-de-outro-restaurante\",\n  \"nome\": \"Produto Invalido\",\n  \"preco\": 10\n}"
+      },
+      "parameters": [],
+      "description": "Esperado: 400 { \"erro\": \"Categoria nao pertence a este restaurante\" }"
+    },
+    {
+      "_id": "req_prod_erro_sem_campo",
+      "_type": "request",
+      "parentId": "fld_erros_prod",
+      "name": "Criar produto sem nome (400)",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"categoria_id\": \"{{ categoria_id }}\",\n  \"preco\": 10\n}"
+      },
+      "parameters": [],
+      "description": "Esperado: 400 { \"erro\": \"Nome e obrigatorio\" }"
+    },
+    {
+      "_id": "req_prod_erro_preco_negativo",
+      "_type": "request",
+      "parentId": "fld_erros_prod",
+      "name": "Criar produto com preco negativo (400)",
+      "method": "POST",
+      "url": "{{ base_url }}/restaurantes/{{ restaurante_id }}/produtos",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"categoria_id\": \"{{ categoria_id }}\",\n  \"nome\": \"Produto\",\n  \"preco\": -5\n}"
+      },
+      "parameters": [],
+      "description": "Esperado: 400 { \"erro\": \"Preco invalido\" }"
+    }
+  ]
+}

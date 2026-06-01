@@ -27,10 +27,12 @@ export class CategoriaController {
 
   async show(req: Request, res: Response, next: NextFunction) {
     try {
+      const restaurante_id = obterTexto(req.params.restaurante_id);
       const id = obterTexto(req.params.id);
+      if (!restaurante_id) throw new ValidationError("Restaurante inválido");
       if (!id) throw new ValidationError("Id inválido");
 
-      const categoria = await categoriaService.obterPorId(id);
+      const categoria = await categoriaService.obterPorId(id, restaurante_id);
       return res.json(categoria);
     } catch (error) {
       next(error);
@@ -62,12 +64,14 @@ export class CategoriaController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
+      const restaurante_id = obterTexto(req.params.restaurante_id);
       const id = obterTexto(req.params.id);
+      if (!restaurante_id) throw new ValidationError("Restaurante inválido");
       if (!id) throw new ValidationError("Id inválido");
 
       const { nome, ordem, ativo } = req.body;
 
-      const categoria = await categoriaService.atualizar(id, {
+      const categoria = await categoriaService.atualizar(id, restaurante_id, {
         ...(nome !== undefined ? { nome } : {}),
         ...(ordem !== undefined ? { ordem } : {}),
         ...(ativo !== undefined ? { ativo } : {}),
@@ -81,10 +85,12 @@ export class CategoriaController {
 
   async destroy(req: Request, res: Response, next: NextFunction) {
     try {
+      const restaurante_id = obterTexto(req.params.restaurante_id);
       const id = obterTexto(req.params.id);
+      if (!restaurante_id) throw new ValidationError("Restaurante inválido");
       if (!id) throw new ValidationError("Id inválido");
 
-      await categoriaService.deletar(id);
+      await categoriaService.deletar(id, restaurante_id);
       return res.status(204).send();
     } catch (error) {
       next(error);
