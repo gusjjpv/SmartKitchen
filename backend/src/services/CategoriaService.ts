@@ -25,15 +25,15 @@ export class CategoriaService {
     });
   }
 
-  async obterPorId(id: string) {
+  async obterPorId(id: string, restaurante_id: string) {
     const categoria = await prisma.categoria.findUnique({
       where: { id },
-      include: {
-        _count: { select: { produtos: true } },
-      },
     });
 
-    if (!categoria) throw new NotFoundError("Categoria");
+    if (!categoria || categoria.restaurante_id !== restaurante_id) {
+      throw new NotFoundError("Categoria");
+    }
+
     return categoria;
   }
 
@@ -50,9 +50,11 @@ export class CategoriaService {
     });
   }
 
-  async atualizar(id: string, dados: AtualizarCategoriaDTO) {
+  async atualizar(id: string, restaurante_id: string, dados: AtualizarCategoriaDTO) {
     const categoria = await prisma.categoria.findUnique({ where: { id } });
-    if (!categoria) throw new NotFoundError("Categoria");
+    if (!categoria || categoria.restaurante_id !== restaurante_id) {
+      throw new NotFoundError("Categoria");
+    }
 
     const data = {
       ...(dados.nome !== undefined ? { nome: dados.nome } : {}),
@@ -66,9 +68,11 @@ export class CategoriaService {
     });
   }
 
-  async deletar(id: string) {
+  async deletar(id: string, restaurante_id: string) {
     const categoria = await prisma.categoria.findUnique({ where: { id } });
-    if (!categoria) throw new NotFoundError("Categoria");
+    if (!categoria || categoria.restaurante_id !== restaurante_id) {
+      throw new NotFoundError("Categoria");
+    }
 
     return await prisma.categoria.delete({
       where: { id },
