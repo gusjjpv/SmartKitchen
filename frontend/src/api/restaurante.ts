@@ -1,7 +1,7 @@
 import type { Restaurante, CriarRestauranteDTO, AtualizarRestauranteDTO } from '@/types'
 import { api } from './client'
 
-export async function listarRestaurantes(params?: { cidade?: string; ativo?: boolean }) {
+export async function listarRestaurantes(params?: { cidade?: string; ativo?: boolean; admin_usuario_id?: string }) {
   const { data } = await api.get<Restaurante[]>('/restaurantes', { params })
   return data
 }
