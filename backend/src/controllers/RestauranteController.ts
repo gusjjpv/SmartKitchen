@@ -50,10 +50,12 @@ const validarLogoBase64 = (valor: unknown): string | null => {
 export class RestauranteController {
   async index(req: Request, res: Response, next: NextFunction) {
     try {
+      const admin_usuario_id = obterTexto(req.query.admin_usuario_id);
       const cidade = obterTexto(req.query.cidade);
       const ativoTexto = obterTexto(req.query.ativo);
 
-      const filtros: { cidade?: string; ativo?: boolean } = {};
+      const filtros: { cidade?: string; ativo?: boolean; admin_usuario_id?: string } = {};
+      if (admin_usuario_id) filtros.admin_usuario_id = admin_usuario_id;
       if (cidade) filtros.cidade = cidade;
       if (ativoTexto === "true") filtros.ativo = true;
       if (ativoTexto === "false") filtros.ativo = false;

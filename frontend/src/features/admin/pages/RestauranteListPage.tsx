@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useListarRestaurantes } from '@/hooks/useRestaurante'
+import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Store, MapPin, Phone, Pencil, Building2 } from 'lucide-react'
@@ -94,8 +95,9 @@ function SkeletonCard() {
 }
 
 export function RestauranteListPage() {
+  const { user } = useAuth()
   const navigate = useNavigate()
-  const { data: restaurantes, isLoading } = useListarRestaurantes()
+  const { data: restaurantes, isLoading } = useListarRestaurantes({ admin_usuario_id: user?.id })
 
   if (isLoading) {
     return (

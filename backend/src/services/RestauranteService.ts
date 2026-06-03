@@ -35,9 +35,10 @@ interface AtualizarRestauranteDTO {
 }
 
 export class RestauranteService {
-  async obterTodos(filtros?: { cidade?: string; ativo?: boolean }) {
+  async obterTodos(filtros?: { cidade?: string; ativo?: boolean; admin_usuario_id?: string }) {
     return await prisma.restaurante.findMany({
       where: {
+        ...(filtros?.admin_usuario_id && { admin_usuario_id: filtros.admin_usuario_id }),
         ...(filtros?.cidade && { cidade: filtros.cidade }),
         ...(filtros?.ativo !== undefined && { ativo: filtros.ativo }),
       },
