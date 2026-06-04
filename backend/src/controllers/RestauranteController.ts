@@ -106,6 +106,25 @@ export class RestauranteController {
     }
   }
 
+  async cardapioBySlug(req: Request, res: Response, next: NextFunction) {
+    try {
+      const slug = obterTexto(req.params.slug);
+      if (!slug) {
+        return res.status(400).json({ erro: "Slug inválido" });
+      }
+
+      const cardapio = await restauranteService.obterCardapioPorSlug(slug);
+
+      if (!cardapio) {
+        return res.status(404).json({ erro: "Restaurante não encontrado" });
+      }
+
+      return res.json(cardapio);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async store(req: Request, res: Response, next: NextFunction) {
     try {
       const {

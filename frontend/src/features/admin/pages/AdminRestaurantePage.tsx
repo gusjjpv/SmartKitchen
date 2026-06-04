@@ -5,10 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DadosRestauranteForm } from '../components/DadosRestauranteForm'
 import { HorariosEditor } from '../components/HorariosEditor'
 import { CardapioEditor } from '../components/CardapioEditor'
+import { GerenciarMesas } from '../components/GerenciarMesas'
 import { useListarRestaurantes, useCriarRestaurante, useAtualizarRestaurante } from '@/hooks/useRestaurante'
 import type { CriarRestauranteDTO } from '@/types'
 import { toast } from 'sonner'
-import { Plus, Store, ArrowLeft, UtensilsCrossed, Clock } from 'lucide-react'
+import { Plus, Store, ArrowLeft, UtensilsCrossed, Clock, Smartphone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function AdminRestaurantePage() {
@@ -134,6 +135,11 @@ export function AdminRestaurantePage() {
             <Store className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             Cardápio
           </TabsTrigger>
+          <TabsTrigger value="mesas" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+            <Smartphone className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
+            <span className="hidden sm:inline">Mesas</span>
+            <span className="sm:hidden">Mesas</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dados" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
@@ -151,6 +157,9 @@ export function AdminRestaurantePage() {
 
         <TabsContent value="cardapio" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <CardapioEditor restauranteId={restaurante.id} />}
+        </TabsContent>
+        <TabsContent value="mesas" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+          {restaurante && <GerenciarMesas restauranteId={restaurante.id} slug={restaurante.slug} />}
         </TabsContent>
       </Tabs>
     </div>
