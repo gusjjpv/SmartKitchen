@@ -3,7 +3,7 @@ import { createContext, useContext, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 interface MesaContextValue {
-  mesa: number | null
+  mesa: string | null
 }
 
 const MesaContext = createContext<MesaContextValue>({ mesa: null })
@@ -13,8 +13,7 @@ export function MesaProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => {
     const raw = searchParams.get('mesa')
-    const mesa = raw ? Number(raw) : null
-    return { mesa: mesa !== null && !Number.isNaN(mesa) ? mesa : null }
+    return { mesa: raw ?? null }
   }, [searchParams])
 
   return <MesaContext.Provider value={value}>{children}</MesaContext.Provider>

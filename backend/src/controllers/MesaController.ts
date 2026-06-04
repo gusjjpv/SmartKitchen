@@ -69,8 +69,12 @@ export class MesaController {
 
       const { numero, ocupada } = req.body;
 
+      if (numero !== undefined && (typeof numero !== "string" || !numero.trim())) {
+        throw new ValidationError("Número da mesa é obrigatório");
+      }
+
       const mesa = await mesaService.atualizar(id, restaurante_id, {
-        ...(numero !== undefined ? { numero } : {}),
+        ...(numero !== undefined ? { numero: numero.trim() } : {}),
         ...(ocupada !== undefined ? { ocupada } : {}),
       });
 

@@ -159,7 +159,7 @@ export function AdminRestaurantePage() {
           {restaurante && <CardapioEditor restauranteId={restaurante.id} />}
         </TabsContent>
         <TabsContent value="mesas" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
-          {restaurante && <GerenciarMesas restauranteId={restaurante.id} />}
+          {restaurante && <GerenciarMesas restauranteId={restaurante.id} slug={restaurante.slug} />}
         </TabsContent>
       </Tabs>
     </div>

@@ -6,12 +6,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { Loader2, Plus, Trash2, QrCode, Smartphone, CheckCircle2, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import type { Mesa } from '@/types'
 
 interface GerenciarMesasProps {
   restauranteId: string
+  slug: string
 }
 
-export function GerenciarMesas({ restauranteId }: GerenciarMesasProps) {
+export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
   const { data: mesas, isLoading } = useListarMesas(restauranteId)
   const criarMutation = useCriarMesa()
   const atualizarMutation = useAtualizarMesa()
@@ -19,6 +21,7 @@ export function GerenciarMesas({ restauranteId }: GerenciarMesasProps) {
 
   const [novoNumero, setNovoNumero] = useState('')
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [pendingToggles, setPendingToggles] = useState<Set<string>>(new Set())
 
   async function handleAdicionar() {
     const numero = novoNumero.trim()
@@ -37,11 +40,13 @@ export function GerenciarMesas({ restauranteId }: GerenciarMesasProps) {
   }
 
   async function handleToggleOcupada(mesaId: string, ocupada: boolean) {
+    setPendingToggles((prev) => new Set(prev).add(mesaId))
     try {
       await atualizarMutation.mutateAsync({ restauranteId, id: mesaId, dto: { ocupada: !ocupada } })
     } catch {
       toast.error('Erro ao atualizar mesa')
     }
+    setPendingToggles((prev) => { const next = new Set(prev); next.delete(mesaId); return next })
   }
 
   async function handleDeletar(mesaId: string) {
@@ -132,7 +137,7 @@ export function GerenciarMesas({ restauranteId }: GerenciarMesasProps) {
                     <div className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
                       <QrCode className="size-3" />
                       <code className="truncate max-w-[180px] sm:max-w-[300px]">
-                        /cardapio/{restauranteId.slice(0, 6)}...?mesa={mesa.numero}
+                        /cardapio/{slug}?mesa={mesa.numero}
                       </code>
                     </div>
                   </div>
@@ -146,7 +151,7 @@ export function GerenciarMesas({ restauranteId }: GerenciarMesasProps) {
                     onClick={() => handleToggleOcupada(mesa.id, mesa.ocupada)}
                     title={mesa.ocupada ? 'Marcar como disponível' : 'Marcar como ocupada'}
                   >
-                    {atualizarMutation.isPending ? (
+                    {pendingToggles.has(mesa.id) ? (
                       <Loader2 className="size-3.5 animate-spin" />
                     ) : (
                       <CheckCircle2 className={`size-3.5 ${mesa.ocupada ? 'text-destructive' : 'text-verde'}`} />

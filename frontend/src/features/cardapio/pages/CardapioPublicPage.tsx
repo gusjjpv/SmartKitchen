@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMesa } from '@/contexts/MesaContext'
 import { fetchCardapioPublico, type CardapioPublicResponse } from '@/api/cardapioPublic'
@@ -36,6 +36,9 @@ export function CardapioPublicPage() {
   const { mesa } = useMesa()
   const [state, dispatch] = useReducer(reducer, { status: 'loading' })
 
+  const mesaRef = useRef(mesa)
+  mesaRef.current = mesa
+
   useEffect(() => {
     if (!slug) return
     let cancelled = false
@@ -43,7 +46,7 @@ export function CardapioPublicPage() {
     fetchCardapioPublico(slug)
       .then((d) => {
         if (cancelled) return
-        if (mesa && !d.mesas.some((m) => m.numero === String(mesa))) {
+        if (mesaRef.current && !d.mesas.some((m) => m.numero === mesaRef.current)) {
           dispatch({ type: 'mesa_invalida' })
         } else {
           dispatch({ type: 'success', data: d })
@@ -51,7 +54,7 @@ export function CardapioPublicPage() {
       })
       .catch(() => { if (!cancelled) dispatch({ type: 'error' }) })
     return () => { cancelled = true }
-  }, [slug, mesa])
+  }, [slug])
 
   if (!mesa) return <NoMesaScreen />
 
