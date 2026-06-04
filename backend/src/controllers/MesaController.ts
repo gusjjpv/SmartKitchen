@@ -67,7 +67,7 @@ export class MesaController {
       if (!restaurante_id) throw new ValidationError("Restaurante inválido");
       if (!id) throw new ValidationError("Id inválido");
 
-      const { numero, ocupada } = req.body;
+      const { numero, ocupada, cpf_cliente } = req.body;
 
       if (numero !== undefined && (typeof numero !== "string" || !numero.trim())) {
         throw new ValidationError("Número da mesa é obrigatório");
@@ -76,6 +76,7 @@ export class MesaController {
       const mesa = await mesaService.atualizar(id, restaurante_id, {
         ...(numero !== undefined ? { numero: numero.trim() } : {}),
         ...(ocupada !== undefined ? { ocupada } : {}),
+        ...(cpf_cliente !== undefined ? { cpf_cliente } : {}),
       });
 
       return res.json(mesa);

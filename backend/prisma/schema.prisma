@@ -86,6 +86,7 @@ model Mesa {
   
   numero          String
   ocupada         Boolean   @default(false)
+  cpf_cliente     String?
   qr_code_url     String?   // URL do QR Code gerado
   
   criado_em       DateTime  @default(now())

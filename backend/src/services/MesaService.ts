@@ -9,6 +9,7 @@ interface CriarMesaDTO {
 interface AtualizarMesaDTO {
   numero?: string;
   ocupada?: boolean;
+  cpf_cliente?: string;
 }
 
 export class MesaService {
@@ -77,6 +78,7 @@ export class MesaService {
     const data = {
       ...(dados.numero !== undefined ? { numero: dados.numero } : {}),
       ...(dados.ocupada !== undefined ? { ocupada: dados.ocupada } : {}),
+      ...(dados.cpf_cliente !== undefined ? { cpf_cliente: dados.cpf_cliente } : {}),
     };
 
     return await prisma.mesa.update({

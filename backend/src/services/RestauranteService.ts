@@ -150,7 +150,7 @@ export class RestauranteService {
           orderBy: { dia_semana: "asc" },
         },
         mesas: {
-          select: { numero: true },
+          select: { id: true, numero: true },
         },
       },
     });

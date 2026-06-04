@@ -139,6 +139,7 @@ export interface Mesa {
   restaurante_id: string
   numero: string
   ocupada: boolean
+  cpf_cliente: string | null
   qr_code_url: string | null
   criado_em: string
   atualizado_em: string
@@ -149,4 +150,12 @@ export interface CriarMesaDTO {
   numero: string
 }
 
-export type AtualizarMesaDTO = Partial<CriarMesaDTO> & { ocupada?: boolean }
+export type AtualizarMesaDTO = Partial<CriarMesaDTO> & { ocupada?: boolean; cpf_cliente?: string }
+
+export interface ComandaItem {
+  produto_id: string
+  nome: string
+  preco: number
+  foto_base64: string | null
+  quantidade: number
+}

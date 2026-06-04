@@ -26,7 +26,7 @@ export interface CardapioPublicResponse {
     horario_fechamento: string | null
     fechado: boolean
   }[]
-  mesas: { numero: string }[]
+  mesas: { id: string; numero: string }[]
 }
 
 export async function fetchCardapioPublico(slug: string) {
