@@ -9,7 +9,7 @@ import type { CriarRestauranteDTO, AtualizarRestauranteDTO } from '@/types'
 
 const RESTAURANTE_KEY = 'restaurante'
 
-export function useListarRestaurantes(params?: { cidade?: string; ativo?: boolean }) {
+export function useListarRestaurantes(params?: { cidade?: string; ativo?: boolean; admin_usuario_id?: string }) {
   return useQuery({
     queryKey: [RESTAURANTE_KEY, 'list', params],
     queryFn: () => listarRestaurantes(params),

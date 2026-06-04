@@ -133,3 +133,20 @@ export interface CriarProdutoDTO {
 }
 
 export type AtualizarProdutoDTO = Partial<CriarProdutoDTO>
+
+export interface Mesa {
+  id: string
+  restaurante_id: string
+  numero: string
+  ocupada: boolean
+  qr_code_url: string | null
+  criado_em: string
+  atualizado_em: string
+  _count?: { pedidos: number }
+}
+
+export interface CriarMesaDTO {
+  numero: string
+}
+
+export type AtualizarMesaDTO = Partial<CriarMesaDTO> & { ocupada?: boolean }

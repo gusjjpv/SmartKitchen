@@ -7,6 +7,7 @@ const restauranteController = new RestauranteController();
 router.get("/restaurantes", restauranteController.index);
 router.get("/restaurantes/:id", restauranteController.show);
 router.get("/restaurantes/slug/:slug", restauranteController.showBySlug);
+router.get("/restaurantes/slug/:slug/cardapio", restauranteController.cardapioBySlug);
 router.post("/restaurantes", restauranteController.store);
 router.put("/restaurantes/:id", restauranteController.update);
 router.delete("/restaurantes/:id", restauranteController.destroy);

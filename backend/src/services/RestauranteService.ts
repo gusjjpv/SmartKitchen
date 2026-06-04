@@ -133,6 +133,29 @@ export class RestauranteService {
     });
   }
 
+  async obterCardapioPorSlug(slug: string) {
+    return await prisma.restaurante.findUnique({
+      where: { slug },
+      include: {
+        categorias: {
+          where: { ativo: true },
+          orderBy: { ordem: "asc" },
+          include: {
+            produtos: {
+              where: { disponivel: true },
+            },
+          },
+        },
+        horarios: {
+          orderBy: { dia_semana: "asc" },
+        },
+        mesas: {
+          select: { numero: true },
+        },
+      },
+    });
+  }
+
   async deletar(id: string) {
     return await prisma.restaurante.delete({
       where: { id },
