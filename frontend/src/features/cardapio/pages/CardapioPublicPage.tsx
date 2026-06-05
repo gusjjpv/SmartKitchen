@@ -1,10 +1,14 @@
 import { useEffect, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMesa } from '@/contexts/MesaContext'
+import { ComandaProvider, useComanda } from '@/contexts/ComandaContext'
+import { ComandaPanel } from '@/components/ComandaPanel'
+import { CpfInputScreen } from '@/components/CpfInputScreen'
 import { fetchCardapioPublico, type CardapioPublicResponse } from '@/api/cardapioPublic'
 import { MesaBadge } from '@/components/MesaBadge'
 import { NoMesaScreen } from '@/components/NoMesaScreen'
-import { Store, Clock, ImageIcon, Smartphone } from 'lucide-react'
+import { toast } from 'sonner'
+import { Store, Clock, ImageIcon, Smartphone, Plus } from 'lucide-react'
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -103,7 +107,48 @@ export function CardapioPublicPage() {
     )
   }
 
+  if (state.status !== 'success') return null
   const data = state.data
+
+  return (
+    <ComandaProvider slug={slug!} mesa={mesa}>
+      <CardapioFlow data={data} />
+    </ComandaProvider>
+  )
+}
+
+function CardapioFlow({ data }: { data: CardapioPublicResponse }) {
+  const { cpf, setCpf, ocuparMesa } = useComanda()
+  const { mesa } = useMesa()
+
+  if (!cpf) {
+    return (
+      <CpfInputScreen
+        onConfirm={async (cpf) => {
+          setCpf(cpf)
+          const mesaEncontrada = data.mesas.find((m) => m.numero === mesa)
+          if (mesaEncontrada) {
+            try {
+              await ocuparMesa(data.id, mesaEncontrada.id)
+            } catch {
+              toast.error('Erro ao ocupar mesa no servidor')
+            }
+          }
+        }}
+      />
+    )
+  }
+
+  return (
+    <>
+      <CardapioContent data={data} />
+      <ComandaPanel />
+    </>
+  )
+}
+
+function CardapioContent({ data }: { data: CardapioPublicResponse }) {
+  const { adicionar } = useComanda()
 
   return (
     <div className="min-h-screen bg-background">
@@ -187,6 +232,21 @@ export function CardapioPublicPage() {
                           {prod.descricao && (
                             <p className="mt-0.5 text-xs text-muted-foreground/70 line-clamp-2">{prod.descricao}</p>
                           )}
+                          <button
+                            onClick={() => {
+                              adicionar({
+                                id: prod.id,
+                                nome: prod.nome,
+                                preco: prod.preco,
+                                foto_base64: prod.foto_base64,
+                              })
+                              toast.success(`${prod.nome} adicionado`)
+                            }}
+                            className="mt-2 inline-flex items-center gap-1 rounded-lg border border-laranja/20 bg-laranja/5 px-2.5 py-1 text-xs font-semibold text-laranja transition-colors hover:bg-laranja/10"
+                          >
+                            <Plus className="size-3" />
+                            Adicionar
+                          </button>
                         </div>
                       </div>
                     ))}
