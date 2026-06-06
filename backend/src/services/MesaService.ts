@@ -139,6 +139,7 @@ export class MesaService {
     return await prisma.mesa.update({
       where: { id },
       data: { qr_code_url: qrCodeDataUrl },
+      include: { _count: { select: { pedidos: true } } },
     });
   }
 
