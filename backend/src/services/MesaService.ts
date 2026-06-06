@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma.js";
 import { NotFoundError, ConflictError } from "../errors/AppError.js";
+import QRCode from "qrcode";
 
 interface CriarMesaDTO {
   restaurante_id: string;
@@ -47,10 +48,24 @@ export class MesaService {
       throw new ConflictError("Já existe uma mesa com este número");
     }
 
+    const restaurante = await prisma.restaurante.findUnique({
+      where: { id: dados.restaurante_id },
+      select: { slug: true },
+    });
+
+    if (!restaurante) {
+      throw new NotFoundError("Restaurante");
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const destinoUrl = `${baseUrl}/cardapio/${restaurante.slug}?mesa=${dados.numero}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(destinoUrl);
+
     return await prisma.mesa.create({
       data: {
         restaurante_id: dados.restaurante_id,
         numero: dados.numero,
+        qr_code_url: qrCodeDataUrl,
       },
     });
   }
@@ -75,11 +90,19 @@ export class MesaService {
       }
     }
 
-    const data = {
+    if (dados.ocupada === true && mesa.ocupada) {
+      throw new ConflictError("Mesa já está ocupada");
+    }
+
+    const data: Record<string, unknown> = {
       ...(dados.numero !== undefined ? { numero: dados.numero } : {}),
       ...(dados.ocupada !== undefined ? { ocupada: dados.ocupada } : {}),
       ...(dados.cpf_cliente !== undefined ? { cpf_cliente: dados.cpf_cliente } : {}),
     };
+
+    if (dados.ocupada === false) {
+      data.cpf_cliente = null;
+    }
 
     return await prisma.mesa.update({
       where: { id },
