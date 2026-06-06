@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma.js";
-import { NotFoundError, ValidationError } from "../errors/AppError.js";
+import { NotFoundError, ValidationError, ConflictError } from "../errors/AppError.js";
 
 interface CriarPedidoItemDTO {
   produto_id: string;
@@ -126,5 +126,39 @@ export class PedidoService {
     }
 
     return pedido;
+  }
+
+  async atualizarStatus(id: string, restaurante_id: string, status: string) {
+    const statusValido = ["RECEBIDO", "EM_PREPARO", "PRONTO", "ENTREGUE"];
+
+    if (!statusValido.includes(status)) {
+      throw new ValidationError(`Status inválido. Valores válidos: ${statusValido.join(", ")}`);
+    }
+
+    const pedido = await prisma.pedido.findUnique({
+      where: { id },
+      select: { id: true, restaurante_id: true, status: true },
+    });
+
+    if (!pedido || pedido.restaurante_id !== restaurante_id) {
+      throw new NotFoundError("Pedido");
+    }
+
+    return await prisma.pedido.update({
+      where: { id },
+      data: { status: status as never },
+      include: {
+        itens: {
+          include: {
+            produto: {
+              select: { id: true, nome: true, foto_base64: true },
+            },
+          },
+        },
+        mesa: {
+          select: { id: true, numero: true },
+        },
+      },
+    });
   }
 }
