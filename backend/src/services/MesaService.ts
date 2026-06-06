@@ -100,6 +100,18 @@ export class MesaService {
       ...(dados.cpf_cliente !== undefined ? { cpf_cliente: dados.cpf_cliente } : {}),
     };
 
+    if (dados.numero && dados.numero !== mesa.numero) {
+      const restaurante = await prisma.restaurante.findUnique({
+        where: { id: restaurante_id },
+        select: { slug: true },
+      });
+      if (restaurante) {
+        const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        const destinoUrl = `${baseUrl}/cardapio/${restaurante.slug}?mesa=${dados.numero}`;
+        data.qr_code_url = await QRCode.toDataURL(destinoUrl);
+      }
+    }
+
     if (dados.ocupada === false) {
       data.cpf_cliente = null;
     }
