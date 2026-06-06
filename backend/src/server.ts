@@ -5,6 +5,7 @@ import horarioFuncionamentoRoutes from "./routes/HorarioFuncionamentoRoutes.js";
 import categoriaRoutes from "./routes/CategoriaRoutes.js";
 import produtoRoutes from "./routes/ProdutoRoutes.js";
 import mesaRoutes from "./routes/MesaRoutes.js";
+import pedidoRoutes from "./routes/PedidoRoutes.js";
 import { errorHandler } from './middlewares/errorMiddleware.js';
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(horarioFuncionamentoRoutes);
 app.use(categoriaRoutes);
 app.use(produtoRoutes);
 app.use(mesaRoutes);
+app.use(pedidoRoutes);
 
 app.use(errorHandler);
 
