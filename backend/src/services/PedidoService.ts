@@ -39,10 +39,11 @@ export class PedidoService {
       }
     }
 
-    const total = dados.itens.reduce(
-      (acc, item) => acc + item.quantidade * item.preco_unitario,
+    const totalCentavos = dados.itens.reduce(
+      (acc, item) => acc + Math.round(item.quantidade * item.preco_unitario * 100),
       0,
     );
+    const total = totalCentavos / 100;
 
     return await prisma.$transaction(async (tx) => {
       const pedido = await tx.pedido.create({
