@@ -15,6 +15,7 @@ interface ComandaContextValue {
   remover: (produto_id: string) => void
   atualizarQuantidade: (produto_id: string, delta: number) => void
   limpar: () => void
+  confirmarPedido: (restauranteId: string, mesaId: string) => Promise<unknown>
   ocuparMesa: (restauranteId: string, mesaId: string) => Promise<void>
   total: number
   totalItens: number
@@ -122,6 +123,23 @@ export function ComandaProvider({ slug, mesa, children }: ComandaProviderProps) 
     setDados((prev) => ({ ...prev, itens: [] }))
   }, [])
 
+  const confirmarPedido = useCallback(
+    async (restauranteId: string, mesaId: string) => {
+      const response = await api.post(`/restaurantes/${restauranteId}/mesas/${mesaId}/pedidos`, {
+        itens: dados.itens.map((i) => ({
+          produto_id: i.produto_id,
+          quantidade: i.quantidade,
+          preco_unitario: i.preco,
+        })),
+      })
+      if (response.status === 201) {
+        limpar()
+      }
+      return response.data
+    },
+    [dados.itens, limpar],
+  )
+
   const value = useMemo(
     () => ({
       get cpf() { return dados.cpf },
@@ -131,6 +149,7 @@ export function ComandaProvider({ slug, mesa, children }: ComandaProviderProps) 
       remover,
       atualizarQuantidade,
       limpar,
+      confirmarPedido,
       ocuparMesa,
       get total() {
         return dados.itens.reduce((acc, i) => acc + i.preco * i.quantidade, 0)
@@ -139,7 +158,7 @@ export function ComandaProvider({ slug, mesa, children }: ComandaProviderProps) 
         return dados.itens.reduce((acc, i) => acc + i.quantidade, 0)
       },
     }),
-    [dados, setCpf, adicionar, remover, atualizarQuantidade, limpar, ocuparMesa],
+    [dados, setCpf, adicionar, remover, atualizarQuantidade, limpar, confirmarPedido, ocuparMesa],
   )
 
   return <ComandaContext.Provider value={value}>{children}</ComandaContext.Provider>

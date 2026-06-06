@@ -10,6 +10,7 @@ import { CadastroPage } from '@/features/auth/pages/CadastroPage'
 import { AdminRestaurantePage } from '@/features/admin/pages/AdminRestaurantePage'
 import { RestauranteListPage } from '@/features/admin/pages/RestauranteListPage'
 import { CardapioPublicPage } from '@/features/cardapio/pages/CardapioPublicPage'
+import { PedidoConfirmadoPage } from '@/features/cardapio/pages/PedidoConfirmadoPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/restaurantes" element={<AuthGuard><RestauranteListPage /></AuthGuard>} />
                 <Route path="/admin" element={<AuthGuard><AdminRestaurantePage /></AuthGuard>} />
                 <Route path="/cardapio/:slug" element={<CardapioPublicPage />} />
+                <Route path="/cardapio/:slug/pedido-confirmado" element={<PedidoConfirmadoPage />} />
               </Routes>
             </MesaProvider>
           </BrowserRouter>

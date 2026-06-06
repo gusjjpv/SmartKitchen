@@ -1,16 +1,26 @@
 import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useComanda } from '@/contexts/ComandaContext'
 import { useMesa } from '@/contexts/MesaContext'
-import { ShoppingBag, Plus, Minus, Trash2, X, ImageIcon } from 'lucide-react'
+import { ShoppingBag, Plus, Minus, Trash2, X, ImageIcon, Loader2, CheckCircle2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
-export function ComandaPanel() {
+interface ComandaPanelProps {
+  restauranteId: string
+  mesaId: string
+}
+
+export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
+  const navigate = useNavigate()
+  const { slug } = useParams<{ slug: string }>()
   const { mesa } = useMesa()
-  const { itens, adicionar, remover, atualizarQuantidade, limpar, total, totalItens } = useComanda()
+  const { itens, confirmarPedido, remover, atualizarQuantidade, limpar, total, totalItens } = useComanda()
   const [aberto, setAberto] = useState(false)
+  const [enviando, setEnviando] = useState(false)
 
   if (!mesa || itens.length === 0 && !aberto) return null
 
@@ -141,11 +151,38 @@ export function ComandaPanel() {
                 ))}
               </div>
 
-              <div className="border-t border-border/50 px-5 py-4">
+              <div className="border-t border-border/50 px-5 py-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Total</span>
                   <span className="text-lg font-bold text-foreground">{formatarPreco(total)}</span>
                 </div>
+                <button
+                  onClick={async () => {
+                    setEnviando(true)
+                    try {
+                      await confirmarPedido(restauranteId, mesaId)
+                      navigate(`/cardapio/${slug}/pedido-confirmado?mesa=${mesa}`)
+                    } catch {
+                      toast.error('Erro ao enviar pedido. Verifique sua conexão e tente novamente.')
+                    } finally {
+                      setEnviando(false)
+                    }
+                  }}
+                  disabled={enviando || itens.length === 0}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-laranja py-3 text-sm font-bold text-white shadow-lg shadow-laranja/20 transition-all duration-200 hover:bg-laranja/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {enviando ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      Confirmar Pedido
+                    </>
+                  )}
+                </button>
               </div>
             </>
           )}
