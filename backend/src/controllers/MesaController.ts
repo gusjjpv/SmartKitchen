@@ -85,6 +85,20 @@ export class MesaController {
     }
   }
 
+  async regenerarQR(req: Request, res: Response, next: NextFunction) {
+    try {
+      const restaurante_id = obterTexto(req.params.restaurante_id);
+      const id = obterTexto(req.params.id);
+      if (!restaurante_id) throw new ValidationError("Restaurante inválido");
+      if (!id) throw new ValidationError("Id inválido");
+
+      const mesa = await mesaService.regenerarQR(id, restaurante_id);
+      return res.json(mesa);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async destroy(req: Request, res: Response, next: NextFunction) {
     try {
       const restaurante_id = obterTexto(req.params.restaurante_id);
