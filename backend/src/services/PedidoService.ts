@@ -144,6 +144,20 @@ export class PedidoService {
       throw new NotFoundError("Pedido");
     }
 
+    const TRANSICOES_VALIDAS: Record<string, string[]> = {
+      RECEBIDO: ["EM_PREPARO"],
+      EM_PREPARO: ["PRONTO"],
+      PRONTO: ["ENTREGUE"],
+      ENTREGUE: [],
+    };
+
+    if (!TRANSICOES_VALIDAS[pedido.status]?.includes(status)) {
+      throw new ValidationError(
+        `Transição inválida: ${pedido.status} → ${status}. ` +
+          `O status deve seguir a ordem: Recebido → Em Preparo → Pronto → Entregue.`,
+      );
+    }
+
     return await prisma.pedido.update({
       where: { id },
       data: { status: status as never },
