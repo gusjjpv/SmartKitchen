@@ -24,3 +24,8 @@ export async function atualizarMesa(restauranteId: string, id: string, dto: Atua
 export async function deletarMesa(restauranteId: string, id: string) {
   await api.delete(`/restaurantes/${restauranteId}/mesas/${id}`)
 }
+
+export async function regenerarQrCodeMesa(restauranteId: string, id: string) {
+  const { data } = await api.post<Mesa>(`/restaurantes/${restauranteId}/mesas/${id}/qrcode`)
+  return data
+}

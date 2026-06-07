@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useListarMesas, useCriarMesa, useAtualizarMesa, useDeletarMesa } from '@/hooks/useMesaAdmin'
+import { useListarMesas, useCriarMesa, useAtualizarMesa, useDeletarMesa, useRegenerarQrCode } from '@/hooks/useMesaAdmin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { Loader2, Plus, Trash2, QrCode, Smartphone, CheckCircle2, XCircle } from 'lucide-react'
+import { Loader2, Plus, Trash2, QrCode, Smartphone, CheckCircle2, XCircle, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Mesa } from '@/types'
 
@@ -19,9 +19,43 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
   const atualizarMutation = useAtualizarMesa()
   const deletarMutation = useDeletarMesa()
 
+  const regenMutation = useRegenerarQrCode()
+
   const [novoNumero, setNovoNumero] = useState('')
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [pendingToggles, setPendingToggles] = useState<Set<string>>(new Set())
+  const [downloading, setDownloading] = useState<Set<string>>(new Set())
+
+  function downloadQR(dataUrl: string, numero: string) {
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = `qr-mesa-${numero}.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  async function handleDownloadQR(mesa: Mesa) {
+    const id = mesa.id
+    setDownloading((prev) => new Set(prev).add(id))
+    try {
+      let qrUrl = mesa.qr_code_url
+      if (!qrUrl) {
+        const atualizada = await regenMutation.mutateAsync({ restauranteId, id })
+        qrUrl = atualizada.qr_code_url
+      }
+      if (qrUrl) {
+        try {
+          downloadQR(qrUrl, mesa.numero)
+        } catch {
+          toast.error('Erro ao baixar QR Code')
+        }
+      }
+    } catch {
+      toast.error('Erro ao gerar QR Code')
+    }
+    setDownloading((prev) => { const next = new Set(prev); next.delete(id); return next })
+  }
 
   async function handleAdicionar() {
     const numero = novoNumero.trim()
@@ -144,6 +178,19 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 text-muted-foreground hover:text-laranja"
+                    onClick={() => handleDownloadQR(mesa)}
+                    title="Baixar QR Code"
+                  >
+                    {downloading.has(mesa.id) ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"

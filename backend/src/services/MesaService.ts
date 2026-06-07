@@ -122,6 +122,27 @@ export class MesaService {
     });
   }
 
+  async regenerarQR(id: string, restaurante_id: string) {
+    const mesa = await prisma.mesa.findUnique({
+      where: { id },
+      include: { restaurante: { select: { slug: true } } },
+    });
+
+    if (!mesa || mesa.restaurante_id !== restaurante_id) {
+      throw new NotFoundError("Mesa");
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const destinoUrl = `${baseUrl}/cardapio/${mesa.restaurante.slug}?mesa=${mesa.numero}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(destinoUrl);
+
+    return await prisma.mesa.update({
+      where: { id },
+      data: { qr_code_url: qrCodeDataUrl },
+      include: { _count: { select: { pedidos: true } } },
+    });
+  }
+
   async deletar(id: string, restaurante_id: string) {
     const mesa = await prisma.mesa.findUnique({ where: { id } });
     if (!mesa || mesa.restaurante_id !== restaurante_id) {

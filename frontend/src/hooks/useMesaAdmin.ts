@@ -4,6 +4,7 @@ import {
   criarMesa,
   atualizarMesa,
   deletarMesa,
+  regenerarQrCodeMesa,
 } from '@/api/mesas'
 import type { CriarMesaDTO, AtualizarMesaDTO } from '@/types'
 
@@ -33,6 +34,17 @@ export function useAtualizarMesa() {
   return useMutation({
     mutationFn: ({ restauranteId, id, dto }: { restauranteId: string; id: string; dto: AtualizarMesaDTO }) =>
       atualizarMesa(restauranteId, id, dto),
+    onSuccess: (_, { restauranteId }) => {
+      queryClient.invalidateQueries({ queryKey: [MESA_KEY, 'list', restauranteId] })
+    },
+  })
+}
+
+export function useRegenerarQrCode() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ restauranteId, id }: { restauranteId: string; id: string }) =>
+      regenerarQrCodeMesa(restauranteId, id),
     onSuccess: (_, { restauranteId }) => {
       queryClient.invalidateQueries({ queryKey: [MESA_KEY, 'list', restauranteId] })
     },

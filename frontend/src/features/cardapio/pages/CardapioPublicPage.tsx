@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef } from 'react'
+import { useEffect, useReducer, useRef, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMesa } from '@/contexts/MesaContext'
 import { ComandaProvider, useComanda } from '@/contexts/ComandaContext'
@@ -121,12 +121,16 @@ function CardapioFlow({ data }: { data: CardapioPublicResponse }) {
   const { cpf, setCpf, ocuparMesa } = useComanda()
   const { mesa } = useMesa()
 
+  const mesaEncontrada = useMemo(
+    () => data.mesas.find((m) => m.numero === mesa),
+    [data.mesas, mesa],
+  )
+
   if (!cpf) {
     return (
       <CpfInputScreen
         onConfirm={async (cpf) => {
           setCpf(cpf)
-          const mesaEncontrada = data.mesas.find((m) => m.numero === mesa)
           if (mesaEncontrada) {
             try {
               await ocuparMesa(data.id, mesaEncontrada.id)
@@ -142,7 +146,9 @@ function CardapioFlow({ data }: { data: CardapioPublicResponse }) {
   return (
     <>
       <CardapioContent data={data} />
-      <ComandaPanel />
+      {mesaEncontrada && (
+        <ComandaPanel restauranteId={data.id} mesaId={mesaEncontrada.id} />
+      )}
     </>
   )
 }
