@@ -12,7 +12,8 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
   return (
     <Card
       onClick={() => navigate(`/admin?id=${restaurante.id}`)}
-      className="group cursor-pointer border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-laranja/30 hover:shadow-xl hover:shadow-laranja/5 hover:-translate-y-0.5"
+      interactive
+      className="group border-border/50 bg-card/60 backdrop-blur-md shadow-lg"
     >
       <CardContent className="p-5">
         <div className="flex items-start gap-4">

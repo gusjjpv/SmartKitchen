@@ -8,6 +8,7 @@ import { fetchCardapioPublico, type CardapioPublicResponse } from '@/api/cardapi
 import { MesaBadge } from '@/components/MesaBadge'
 import { NoMesaScreen } from '@/components/NoMesaScreen'
 import { toast } from 'sonner'
+import { Card, CardContent } from '@/components/ui/card'
 import { Store, Clock, ImageIcon, Smartphone, Plus } from 'lucide-react'
 
 function formatarPreco(valor: number) {
@@ -215,10 +216,7 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
                 ) : (
                   <div className="space-y-2">
                     {cat.produtos.map((prod) => (
-                      <div
-                        key={prod.id}
-                        className="flex items-start gap-3 rounded-xl border border-border/50 bg-card/40 p-3.5 transition-all duration-200 hover:border-laranja/20 hover:bg-card/60 hover:shadow-lg hover:shadow-laranja/5 hover:-translate-y-0.5"
-                      >
+                      <Card key={prod.id} interactive className="p-3.5 flex items-start gap-3">
                         {prod.foto_base64 ? (
                           <img
                             src={prod.foto_base64}
@@ -254,7 +252,7 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
                             Adicionar
                           </button>
                         </div>
-                      </div>
+                      </Card>
                     ))}
                   </div>
                 )}

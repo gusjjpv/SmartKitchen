@@ -4,6 +4,8 @@ import { MesaBadge } from '@/components/MesaBadge'
 import { obterPedido } from '@/api/pedidos'
 import { STATUS_PEDIDO_LABEL, STATUS_PEDIDO_ORDER, type StatusPedido } from '@/types'
 import { CheckCircle2, ArrowLeft, Loader2, Timer, ChefHat, Utensils, PartyPopper } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -103,12 +105,12 @@ export function PedidoConfirmadoPage() {
         <MesaBadge />
         <div className="flex flex-col items-center justify-center px-4 py-24">
           <p className="text-sm text-muted-foreground">Nenhum pedido encontrado</p>
-          <button
+          <Button
             onClick={() => navigate(`/cardapio/${slug}?mesa=${mesa}`)}
-            className="mt-4 flex items-center gap-2 rounded-xl bg-laranja px-4 py-2 text-sm font-bold text-white"
+            className="mt-4"
           >
             Voltar ao cardápio
-          </button>
+          </Button>
         </div>
       </main>
     )
@@ -132,12 +134,12 @@ export function PedidoConfirmadoPage() {
         <MesaBadge />
         <div className="flex flex-col items-center justify-center px-4 py-24">
           <p className="text-sm text-muted-foreground">Erro ao carregar pedido</p>
-          <button
+          <Button
             onClick={() => navigate(`/cardapio/${slug}?mesa=${mesa}`)}
-            className="mt-4 flex items-center gap-2 rounded-xl bg-laranja px-4 py-2 text-sm font-bold text-white"
+            className="mt-4"
           >
             Voltar ao cardápio
-          </button>
+          </Button>
         </div>
       </main>
     )
@@ -167,15 +169,15 @@ export function PedidoConfirmadoPage() {
             <PedidoStatusStepper status={status} />
           </div>
 
-          <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-5 text-center">
+          <Card className="text-center p-5">
             <div className={`mx-auto mb-3 flex size-12 items-center justify-center rounded-full ${STATUS_CONFIG[status].color}`}>
               <StatusIcon className="size-6" />
             </div>
             <p className="text-xs text-muted-foreground">Status atual</p>
             <p className="mt-1 text-lg font-bold text-foreground">{statusText}</p>
-          </div>
+          </Card>
 
-          <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-5 text-center">
+          <Card className="text-center p-5">
             <p className="text-xs text-muted-foreground">Total do pedido</p>
             <p className="mt-1 text-2xl font-bold text-foreground">
               {Number(pedido.total).toLocaleString('pt-BR', {
@@ -183,15 +185,12 @@ export function PedidoConfirmadoPage() {
                 currency: 'BRL',
               })}
             </p>
-          </div>
+          </Card>
 
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Itens</h3>
             {pedido.itens.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between rounded-xl border border-border/50 bg-card/40 p-3.5"
-              >
+              <Card key={item.id} className="flex items-center justify-between p-3.5">
                 <div className="flex items-center gap-3 min-w-0">
                   {item.produto?.foto_base64 ? (
                     <img
@@ -223,17 +222,18 @@ export function PedidoConfirmadoPage() {
                     currency: 'BRL',
                   })}
                 </span>
-              </div>
+              </Card>
             ))}
           </div>
 
-          <button
+          <Button
             onClick={() => navigate(`/cardapio/${slug}?mesa=${mesa}`)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-laranja px-6 py-3 text-sm font-bold text-white shadow-lg shadow-laranja/20 transition-all duration-200 hover:bg-laranja/90 active:scale-95"
+            variant="glow"
+            className="w-full"
           >
             <ArrowLeft className="size-4" />
             Fazer novo pedido
-          </button>
+          </Button>
         </div>
       </div>
     </main>

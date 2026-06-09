@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { ScanLine, Smartphone, Loader2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface CpfInputScreenProps {
   onConfirm: (cpf: string) => Promise<void>
@@ -44,20 +46,20 @@ export function CpfInputScreen({ onConfirm }: CpfInputScreenProps) {
           Digite seu CPF para iniciar o pedido nesta mesa
         </p>
 
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className="mt-8">
-          <input
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className="mt-8 space-y-4">
+          <Input
             value={formatarCpf(raw)}
             onChange={(e) => setRaw(e.target.value)}
             placeholder="000.000.000-00"
             maxLength={14}
             inputMode="numeric"
             autoFocus
-            className="w-full rounded-xl border border-border/50 bg-card/60 px-4 py-3 text-center text-lg font-bold text-foreground tracking-widest placeholder:text-muted-foreground/30 focus:border-laranja/50 focus:outline-none focus:ring-2 focus:ring-laranja/20 transition-all"
+            className="text-center text-lg font-bold tracking-widest"
           />
-          <button
+          <Button
             type="submit"
             disabled={!valido || loading}
-            className="mt-4 w-full rounded-xl bg-laranja px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-laranja/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
@@ -67,7 +69,7 @@ export function CpfInputScreen({ onConfirm }: CpfInputScreenProps) {
             ) : (
               'Confirmar'
             )}
-          </button>
+          </Button>
         </form>
 
         <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-border/50 bg-card/50 p-4">

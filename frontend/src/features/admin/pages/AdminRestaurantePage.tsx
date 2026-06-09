@@ -6,7 +6,7 @@ import { DadosRestauranteForm } from '../components/DadosRestauranteForm'
 import { HorariosEditor } from '../components/HorariosEditor'
 import { CardapioEditor } from '../components/CardapioEditor'
 import { GerenciarMesas } from '../components/GerenciarMesas'
-import { PainelVendas } from '../components/PainelVendas'
+import { GerenciarPedidos } from '../components/GerenciarPedidos'
 import { useListarRestaurantes, useCriarRestaurante, useAtualizarRestaurante } from '@/hooks/useRestaurante'
 import type { CriarRestauranteDTO } from '@/types'
 import { toast } from 'sonner'
@@ -121,27 +121,27 @@ export function AdminRestaurantePage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start rounded-xl bg-muted/30 p-1 gap-0.5 overflow-x-auto">
-          <TabsTrigger value="dados" className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+        <TabsList className="w-full justify-start overflow-x-auto">
+          <TabsTrigger value="dados" className="data-[state=active]:text-laranja text-xs sm:text-sm px-2.5 sm:px-3">
             <UtensilsCrossed className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             <span className="hidden sm:inline">Dados do Restaurante</span>
             <span className="sm:hidden">Dados</span>
           </TabsTrigger>
-          <TabsTrigger value="horarios" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+          <TabsTrigger value="horarios" disabled={!restaurante} className="data-[state=active]:text-laranja text-xs sm:text-sm px-2.5 sm:px-3">
             <Clock className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             <span className="hidden sm:inline">Horários</span>
             <span className="sm:hidden">Horários</span>
           </TabsTrigger>
-          <TabsTrigger value="cardapio" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+          <TabsTrigger value="cardapio" disabled={!restaurante} className="data-[state=active]:text-laranja text-xs sm:text-sm px-2.5 sm:px-3">
             <Store className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             Cardápio
           </TabsTrigger>
-          <TabsTrigger value="pedidos" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+          <TabsTrigger value="pedidos" disabled={!restaurante} className="data-[state=active]:text-laranja text-xs sm:text-sm px-2.5 sm:px-3">
             <ClipboardList className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             <span className="hidden sm:inline">Pedidos</span>
             <span className="sm:hidden">Pedidos</span>
           </TabsTrigger>
-          <TabsTrigger value="mesas" disabled={!restaurante} className="data-[state=active]:border-b-2 data-[state=active]:border-laranja data-[state=active]:text-laranja rounded-none bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs sm:text-sm px-2.5 sm:px-3 py-2 sm:py-1">
+          <TabsTrigger value="mesas" disabled={!restaurante} className="data-[state=active]:text-laranja text-xs sm:text-sm px-2.5 sm:px-3">
             <Smartphone className="mr-1.5 size-3.5 sm:size-4 shrink-0" />
             <span className="hidden sm:inline">Mesas</span>
             <span className="sm:hidden">Mesas</span>
@@ -165,7 +165,7 @@ export function AdminRestaurantePage() {
           {restaurante && <CardapioEditor restauranteId={restaurante.id} />}
         </TabsContent>
         <TabsContent value="pedidos" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
-          {restaurante && <PainelVendas restauranteId={restaurante.id} />}
+          {restaurante && <GerenciarPedidos restauranteId={restaurante.id} />}
         </TabsContent>
         <TabsContent value="mesas" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <GerenciarMesas restauranteId={restaurante.id} slug={restaurante.slug} />}

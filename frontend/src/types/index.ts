@@ -161,12 +161,14 @@ export interface Pedido {
   status: StatusPedido
   total: number
   criado_em: string
+  atualizado_em: string
   itens: ItemPedido[]
   mesa: { id: string; numero: string }
 }
 
 export interface ItemPedido {
   id: string
+  pedido_id?: string
   produto_id: string | null
   quantidade: number
   preco_unitario: number
@@ -188,27 +190,4 @@ export interface ComandaItem {
   preco: number
   foto_base64: string | null
   quantidade: number
-}
-
-export type StatusPedido = 'RECEBIDO' | 'EM_PREPARO' | 'PRONTO' | 'ENTREGUE'
-
-export interface Pedido {
-  id: string
-  restaurante_id: string
-  mesa_id: string
-  status: StatusPedido
-  total: number
-  criado_em: string
-  atualizado_em: string
-  itens: PedidoItem[]
-  mesa: { id: string; numero: string }
-}
-
-export interface PedidoItem {
-  id: string
-  pedido_id: string
-  produto_id: string | null
-  quantidade: number
-  preco_unitario: number
-  produto: { id: string; nome: string; foto_base64: string | null } | null
 }
