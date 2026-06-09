@@ -81,7 +81,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-8">
+      <div className="flex justify-center py-8" role="status" aria-live="polite">
         <div className="size-6 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
       </div>
     )
@@ -109,7 +109,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
           || dia.horario_fechamento !== (horarios?.find((h) => h.dia_semana === dia.dia_semana)?.horario_fechamento ?? '')
 
         return (
-          <Card key={dia.dia_semana} className="border border-border/50 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-border/80">
+          <Card key={dia.dia_semana} className="border border-border/50 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-laranja/20 hover:shadow-md hover:-translate-y-0.5">
             <CardContent className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4 p-4 sm:p-5">
               <div className="flex min-w-[8rem] items-center gap-2.5">
                 <div className={`size-2.5 rounded-full ${dia.fechado ? 'bg-destructive' : 'bg-verde'}`} />

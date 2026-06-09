@@ -38,7 +38,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4 animate-fade-in">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-laranja/15 via-laranja/5 to-background pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-verde/10 via-transparent to-background pointer-events-none" />
 
@@ -63,6 +63,7 @@ export function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoFocus
+                  aria-required="true"
                 />
               </div>
 
@@ -74,11 +75,12 @@ export function LoginPage() {
                   placeholder="••••••••"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
+                  aria-required="true"
                 />
               </div>
 
               {error && (
-                <p className="text-center text-xs text-destructive">{error}</p>
+                <p className="text-center text-xs text-destructive" role="alert">{error}</p>
               )}
 
               <Button type="submit" className="w-full shadow-lg shadow-laranja/20 hover:shadow-xl hover:shadow-laranja/30 transition-all" disabled={isLoading}>
@@ -100,6 +102,6 @@ export function LoginPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   )
 }

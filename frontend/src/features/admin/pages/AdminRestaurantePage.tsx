@@ -76,7 +76,7 @@ export function AdminRestaurantePage() {
 
   if (isLoadingLista) {
     return (
-      <div className="flex items-center justify-center py-24">
+      <div className="flex items-center justify-center py-24" role="status" aria-live="polite">
         <div className="flex flex-col items-center gap-3">
           <div className="size-8 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
           <p className="text-sm text-muted-foreground animate-pulse">Carregando...</p>
@@ -86,7 +86,7 @@ export function AdminRestaurantePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 sm:gap-4">
           <div className="hidden sm:flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-laranja/20 to-laranja/5 shadow-sm">
@@ -142,7 +142,7 @@ export function AdminRestaurantePage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dados" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="dados" forceMount className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
           <DadosRestauranteForm
             key={restaurante?.id ?? 'new'}
             restaurante={restaurante}

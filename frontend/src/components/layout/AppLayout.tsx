@@ -57,6 +57,7 @@ function AppHeader() {
                 size="sm"
                 className="flex sm:hidden size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent"
                 onClick={() => setMobileMenuOpen(true)}
+                aria-label="Abrir menu"
               >
                 <Menu className="size-5" />
               </Button>
@@ -80,6 +81,7 @@ function AppHeader() {
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                aria-label="Fechar menu"
               >
                 <X className="size-5" />
               </button>

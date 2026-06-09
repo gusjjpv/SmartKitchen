@@ -64,37 +64,37 @@ export function CardapioPublicPage() {
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background" role="status" aria-live="polite">
         <MesaBadge />
-        <div className="mx-auto max-w-2xl space-y-4 px-4 py-6 animate-pulse">
-          <div className="h-40 rounded-2xl bg-muted/50" />
+        <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
+          <div className="h-40 rounded-2xl bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
           {[1, 2, 3].map((i) => (
             <div key={i} className="space-y-2">
-              <div className="h-5 w-24 rounded bg-muted/50" />
-              <div className="h-20 rounded-xl bg-muted/30" />
-              <div className="h-20 rounded-xl bg-muted/30" />
+              <div className="h-5 w-24 rounded bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
+              <div className="h-20 rounded-xl bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
+              <div className="h-20 rounded-xl bg-gradient-to-r from-muted/30 via-muted/20 to-muted/30 bg-[length:200%_100%] animate-shimmer" />
             </div>
           ))}
         </div>
-      </div>
+      </main>
     )
   }
 
   if (state.status === 'error') {
     return (
-      <div className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background">
         <MesaBadge />
         <div className="flex flex-col items-center justify-center px-4 py-24">
           <Store className="size-12 text-muted-foreground/30" />
           <p className="mt-4 text-sm text-muted-foreground">Restaurante não encontrado</p>
         </div>
-      </div>
+      </main>
     )
   }
 
   if (state.status === 'mesa_invalida') {
     return (
-      <div className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background">
         <MesaBadge />
         <div className="flex flex-col items-center justify-center px-4 py-24">
           <Smartphone className="size-12 text-muted-foreground/30" />
@@ -103,7 +103,7 @@ export function CardapioPublicPage() {
             O número da mesa informado não existe para este restaurante
           </p>
         </div>
-      </div>
+      </main>
     )
   }
 
@@ -157,7 +157,7 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
   const { adicionar } = useComanda()
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background">
       <MesaBadge restauranteNome={data.nome} />
 
       <div className="mx-auto max-w-2xl px-4 py-5 space-y-6">
@@ -217,7 +217,7 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
                     {cat.produtos.map((prod) => (
                       <div
                         key={prod.id}
-                        className="flex items-start gap-3 rounded-xl border border-border/50 bg-card/40 p-3.5 transition-all duration-200 hover:border-laranja/20 hover:bg-card/60"
+                        className="flex items-start gap-3 rounded-xl border border-border/50 bg-card/40 p-3.5 transition-all duration-200 hover:border-laranja/20 hover:bg-card/60 hover:shadow-lg hover:shadow-laranja/5 hover:-translate-y-0.5"
                       >
                         {prod.foto_base64 ? (
                           <img
@@ -248,7 +248,7 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
                               })
                               toast.success(`${prod.nome} adicionado`)
                             }}
-                            className="mt-2 inline-flex items-center gap-1 rounded-lg border border-laranja/20 bg-laranja/5 px-2.5 py-1 text-xs font-semibold text-laranja transition-colors hover:bg-laranja/10"
+                            className="mt-2 inline-flex items-center gap-1 rounded-lg border border-laranja/20 bg-laranja/5 px-2.5 py-1 text-xs font-semibold text-laranja transition-all duration-200 hover:bg-laranja/10 active:scale-95"
                           >
                             <Plus className="size-3" />
                             Adicionar
@@ -269,6 +269,6 @@ function CardapioContent({ data }: { data: CardapioPublicResponse }) {
           <span className="h-px w-12 bg-border/50" />
         </div>
       </div>
-    </div>
+    </main>
   )
 }

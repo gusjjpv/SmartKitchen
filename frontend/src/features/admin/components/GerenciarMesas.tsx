@@ -89,7 +89,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-8">
+      <div className="flex justify-center py-8" role="status" aria-live="polite">
         <div className="size-6 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
       </div>
     )
@@ -110,17 +110,16 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <form onSubmit={(e) => { e.preventDefault(); handleAdicionar() }} className="flex items-center gap-2">
             <Input
               placeholder="Número da mesa (ex: 5)"
               value={novoNumero}
               onChange={(e) => setNovoNumero(e.target.value)}
               className="h-9 text-sm"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleAdicionar() }}
             />
             <Button
+              type="submit"
               size="sm"
-              onClick={handleAdicionar}
               disabled={criarMutation.isPending}
               className="shrink-0 h-9"
             >
@@ -131,7 +130,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
               )}
               Adicionar
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
 
@@ -140,7 +139,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
           {mesas.map((mesa) => (
             <Card
               key={mesa.id}
-              className="border border-border/50 bg-card/40 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-laranja/20"
+              className="border border-border/50 bg-card/40 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-laranja/20 hover:shadow-md hover:-translate-y-0.5"
             >
               <CardContent className="flex items-center justify-between gap-3 p-3.5 sm:p-4">
                 <div className="flex items-center gap-3 min-w-0">
@@ -178,6 +177,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
                     className="size-8 text-muted-foreground hover:text-laranja"
                     onClick={() => handleDownloadQR(mesa)}
                     title="Baixar QR Code"
+                    aria-label={`Baixar QR Code da Mesa ${mesa.numero}`}
                   >
                     {downloading.has(mesa.id) ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -191,6 +191,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
                     className="size-8"
                     onClick={() => handleToggleOcupada(mesa.id, mesa.ocupada)}
                     title={mesa.ocupada ? 'Marcar como disponível' : 'Marcar como ocupada'}
+                    aria-label={mesa.ocupada ? `Disponibilizar Mesa ${mesa.numero}` : `Ocupar Mesa ${mesa.numero}`}
                   >
                     {pendingToggles.has(mesa.id) ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -203,6 +204,7 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
                     size="icon"
                     className="size-8 text-muted-foreground hover:text-destructive"
                     onClick={() => setConfirmDelete(mesa.id)}
+                    aria-label={`Excluir Mesa ${mesa.numero}`}
                   >
                     <Trash2 className="size-3.5" />
                   </Button>

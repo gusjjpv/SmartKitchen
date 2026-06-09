@@ -10,7 +10,10 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
   const navigate = useNavigate()
 
   return (
-    <Card className="group border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-laranja/30 hover:shadow-xl hover:shadow-laranja/5 hover:-translate-y-0.5">
+    <Card
+      onClick={() => navigate(`/admin?id=${restaurante.id}`)}
+      className="group cursor-pointer border border-border/50 bg-card/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-laranja/30 hover:shadow-xl hover:shadow-laranja/5 hover:-translate-y-0.5"
+    >
       <CardContent className="p-5">
         <div className="flex items-start gap-4">
           {restaurante.logo_base64 ? (
@@ -66,7 +69,7 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
                 variant="ghost"
                 size="sm"
                 className="h-7 gap-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => navigate(`/admin?id=${restaurante.id}`)}
+                onClick={(e) => { e.stopPropagation(); navigate(`/admin?id=${restaurante.id}`) }}
               >
                 <Pencil className="size-3" />
                 Editar
@@ -81,13 +84,13 @@ function RestauranteCard({ restaurante }: { restaurante: Restaurante }) {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-xl border border-border/50 bg-card/30 p-5 animate-pulse">
+    <div className="rounded-xl border border-border/50 bg-card/30 p-5">
       <div className="flex items-start gap-4">
-        <div className="size-16 rounded-xl bg-muted/50" />
+        <div className="size-16 rounded-xl bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
         <div className="flex-1 space-y-3">
-          <div className="h-4 w-3/4 rounded bg-muted/50" />
-          <div className="h-3 w-1/2 rounded bg-muted/30" />
-          <div className="h-3 w-full rounded bg-muted/30" />
+          <div className="h-4 w-3/4 rounded bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
+          <div className="h-3 w-1/2 rounded bg-gradient-to-r from-muted/30 via-muted/20 to-muted/30 bg-[length:200%_100%] animate-shimmer" />
+          <div className="h-3 w-full rounded bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
         </div>
       </div>
     </div>
@@ -101,13 +104,13 @@ export function RestauranteListPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <div className="h-8 w-48 rounded-lg bg-muted/50 animate-pulse" />
-            <div className="h-4 w-32 rounded bg-muted/30 animate-pulse" />
+            <div className="h-8 w-48 rounded-lg bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
+            <div className="h-4 w-32 rounded bg-gradient-to-r from-muted/30 via-muted/20 to-muted/30 bg-[length:200%_100%] animate-shimmer" />
           </div>
-          <div className="h-9 w-36 rounded-md bg-muted/50 animate-pulse" />
+          <div className="h-9 w-36 rounded-md bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-shimmer" />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <SkeletonCard />
@@ -121,7 +124,7 @@ export function RestauranteListPage() {
   const temRestaurantes = restaurantes && restaurantes.length > 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 sm:gap-4">
           <div className="hidden sm:flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-laranja/20 to-laranja/5 shadow-sm">
