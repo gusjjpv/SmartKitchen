@@ -70,4 +70,21 @@ export class PedidoController {
       next(error);
     }
   }
+
+  async updateStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const restaurante_id = obterTexto(req.params.restaurante_id);
+      const id = obterTexto(req.params.id);
+      if (!restaurante_id) throw new ValidationError("Restaurante inválido");
+      if (!id) throw new ValidationError("Id inválido");
+
+      const { status } = req.body;
+      if (!status) throw new ValidationError("Status é obrigatório");
+
+      const pedido = await pedidoService.atualizarStatus(id, restaurante_id, status);
+      return res.json(pedido);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

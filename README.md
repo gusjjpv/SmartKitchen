@@ -1,6 +1,73 @@
-## 🚀 Primeiras Configurações
+# 🍽️ SmartKitchen
 
-Siga os passos abaixo para colocar o ambiente de desenvolvimento de pé:
+![Status](https://img.shields.io/badge/Status-Concluído%20(MVP)-success)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Typescript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B5C?logo=sqlite&logoColor=white)
+![Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748?logo=prisma&logoColor=white)
+![Arquitetura](https://img.shields.io/badge/Arquitetura-MVC-4A90E2)
+
+Sistema de cardápio digital e gerenciamento de pedidos para restaurantes.
+Clientes escaneiam o QR Code da mesa, acessam o cardápio, montam sua comanda e enviam o pedido direto para a cozinha.
+
+
+## Principais Funcionalidades
+
+### Para o Cliente
+* **Acesso via QR Code:** Captura automática do número da mesa através da URL.
+* **Catálogo de Produtos:** Visualização rápida e responsiva de lanches, bebidas e sobremesas.
+* **Comanda Digital:** Adição e remoção de itens com cálculo dinâmico de subtotal.
+
+
+### Para o Restaurante
+* **Painel de Vendas (Cozinha):** Visualização em tempo real das comandas recebidas, organizadas por mesa.
+* **Gestão de Status:** Atualização do fluxo de preparo (`Recebido` -> `Em Preparo` -> `Concluído`).
+* **Gestão de Entidades:** Estrutura relacional garantindo a integridade entre o cadastro do restaurante, produtos, mesas e comandas ativas.
+
+
+## Estrutura do Projeto
+
+```
+SmartKitchen/
+├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma          # Schema do banco de dados
+│   ├── src/
+│   │   ├── config/                # Configurações (Prisma client)
+│   │   ├── controllers/           # Controllers Express (REST)
+│   │   ├── errors/                # Classes de erro customizadas
+│   │   ├── routes/                # Rotas da API
+│   │   ├── services/              # Lógica de negócio
+│   │   └── server.ts              # Entry point do servidor
+│   └── package.json
+│
+├── frontend/
+│   └── src/
+│       ├── api/                   # Módulos de chamadas HTTP (axios)
+│       ├── components/            # Componentes reutilizáveis (UI)
+│       ├── contexts/              # React Contexts (Auth, Comanda, Mesa, Tema)
+│       ├── features/
+│       │   ├── admin/             # Painel administrativo (Restaurantes, Cardápio, Mesas, Pedidos)
+│       │   ├── auth/              # Login e Cadastro
+│       │   └── cardapio/          # Cardápio público (acesso via QR Code)
+│       ├── hooks/                 # Custom hooks (useQuery / useMutation)
+│       ├── types/                 # Definições TypeScript
+│       └── App.tsx                # Rotas da aplicação
+│   └── package.json
+│
+└── README.md
+```
+
+---
+
+## Como Rodar
+
+### Pré-requisitos
+
+* [Node.js](https://nodejs.org/) v18+
+* npm
 
 ### 1. Clonar o Repositório
 
@@ -9,59 +76,54 @@ git clone https://github.com/gusjjpv/SmartKitchen.git
 cd SmartKitchen
 ```
 
-### 2. Configurando o Backend (primeira vez)
+### 2. Configurar o Backend
 
-1. Entre na pasta do backend e instale as dependências:
 ```bash
 cd backend
 npm install
 ```
 
-
-2. Configure as variáveis de ambiente:
-* Crie um arquivo chamado `.env` na raiz da pasta `backend/` seguindo o modelo abaixo:
-
+Crie o arquivo `.env` na raiz do `backend/`:
 
 ```env
-# String de conexão com o SQLite (Prisma)
 DATABASE_URL="file:./smartkitchen.db"
-
-# Porta onde a API vai rodar
-PORT=
+PORT=3000
 ```
 
+Execute as migrations do Prisma para criar o banco:
 
-3. Execute as migrations do Prisma para estruturar o banco de dados:
 ```bash
 npx prisma migrate dev
 ```
 
-> Se voce precisar reiniciar o banco local do zero, use:
-> ```bash
-> npx prisma migrate reset
-> ```
+> Para reiniciar o banco do zero: `npx prisma migrate reset`
 
-4. Inicie o servidor em modo de desenvolvimento:
+Inicie o servidor:
+
 ```bash
 npm run dev
 ```
 
-> A API estará rodando por padrão em `http://localhost:3000`
----
+> A API estará rodando em `http://localhost:3000`
 
-### 3. Configurando o Frontend
+### 3. Configurar o Frontend
 
-1. Abra um novo terminal, vá até a pasta do frontend e instale as dependências:
+Em outro terminal:
+
 ```bash
 cd frontend
 npm install
-```
-
-
-2. Inicie o servidor de desenvolvimento do Vite:
-```bash
 npm run dev
 ```
 
+> O painel web estará disponível no endereço indicado no terminal (geralmente `http://localhost:5173`)
 
-> O painel web estará disponível no endereço indicado no terminal
+---
+
+**Relações do Modelo de Dados:**
+* `Usuario` 1:N `Restaurante` — Um admin pode gerenciar vários restaurantes
+* `Restaurante` 1:N `Mesa`, `Categoria`, `Pedido`, `HorarioFuncionamento`
+* `Categoria` 1:N `Produto`
+* `Mesa` 1:N `Pedido`
+* `Pedido` 1:N `ItemPedido` — Cada pedido contém uma lista de itens com quantidade e preço
+

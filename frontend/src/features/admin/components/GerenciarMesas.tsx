@@ -44,7 +44,13 @@ export function GerenciarMesas({ restauranteId, slug }: GerenciarMesasProps) {
         const atualizada = await regenMutation.mutateAsync({ restauranteId, id })
         qrUrl = atualizada.qr_code_url
       }
-      if (qrUrl) downloadQR(qrUrl, mesa.numero)
+      if (qrUrl) {
+        try {
+          downloadQR(qrUrl, mesa.numero)
+        } catch {
+          toast.error('Erro ao baixar QR Code')
+        }
+      }
     } catch {
       toast.error('Erro ao gerar QR Code')
     }
