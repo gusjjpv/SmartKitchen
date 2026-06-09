@@ -80,6 +80,8 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
   }, [restaurante, reset, user])
 
   const [logoBase64, setLogoBase64] = useState<string | null>(restaurante?.logo_base64 ?? null)
+  const [initialLogo] = useState(restaurante?.logo_base64 ?? null)
+  const logoDirty = logoBase64 !== initialLogo
 
   async function onSubmit(data: RestauranteFormData) {
     await onSave({ ...data, logo_base64: logoBase64 })
@@ -110,7 +112,7 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
             <div className="space-y-2">
               <Label htmlFor="nome">Nome do Restaurante *</Label>
               <Input id="nome" {...register('nome')} placeholder="Ex: Cantina do Luigi" />
-              {errors.nome && <p className="text-xs text-destructive">{errors.nome.message}</p>}
+              {errors.nome && <p className="text-xs text-destructive" role="alert">{errors.nome.message}</p>}
             </div>
 
             <div className="space-y-2 sm:col-span-2">
@@ -121,13 +123,13 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
             <div className="space-y-2">
               <Label htmlFor="whatsapp">WhatsApp *</Label>
               <Input id="whatsapp" {...register('whatsapp')} placeholder="5511999999999" />
-              {errors.whatsapp && <p className="text-xs text-destructive">{errors.whatsapp.message}</p>}
+              {errors.whatsapp && <p className="text-xs text-destructive" role="alert">{errors.whatsapp.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" {...register('email')} placeholder="contato@restaurante.com" />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+              {errors.email && <p className="text-xs text-destructive" role="alert">{errors.email.message}</p>}
             </div>
           </div>
         </CardContent>
@@ -145,22 +147,22 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
             <div className="space-y-2">
               <Label htmlFor="rua">Rua *</Label>
               <Input id="rua" {...register('rua')} placeholder="Rua..." />
-              {errors.rua && <p className="text-xs text-destructive">{errors.rua.message}</p>}
+              {errors.rua && <p className="text-xs text-destructive" role="alert">{errors.rua.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="numero">Número *</Label>
               <Input id="numero" {...register('numero')} placeholder="Nº" />
-              {errors.numero && <p className="text-xs text-destructive">{errors.numero.message}</p>}
+              {errors.numero && <p className="text-xs text-destructive" role="alert">{errors.numero.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="bairro">Bairro *</Label>
               <Input id="bairro" {...register('bairro')} placeholder="Bairro..." />
-              {errors.bairro && <p className="text-xs text-destructive">{errors.bairro.message}</p>}
+              {errors.bairro && <p className="text-xs text-destructive" role="alert">{errors.bairro.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="cidade">Cidade *</Label>
               <Input id="cidade" {...register('cidade')} placeholder="Cidade..." />
-              {errors.cidade && <p className="text-xs text-destructive">{errors.cidade.message}</p>}
+              {errors.cidade && <p className="text-xs text-destructive" role="alert">{errors.cidade.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="estado">Estado</Label>
@@ -178,7 +180,7 @@ export function DadosRestauranteForm({ restaurante, onSave, isSaving }: DadosRes
         <p className="text-xs text-muted-foreground">
           {restaurante ? 'Altere os dados e salve' : 'Preencha os campos para criar'}
         </p>
-        <Button type="submit" disabled={isSaving || (!isDirty && !!restaurante)}>
+        <Button type="submit" disabled={isSaving || (!isDirty && !!restaurante && !logoDirty)}>
           {isSaving ? (
             <>
               <Loader2 className="size-4 animate-spin" />
