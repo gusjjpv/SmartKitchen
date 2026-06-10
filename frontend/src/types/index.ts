@@ -152,14 +152,6 @@ export interface CriarMesaDTO {
 
 export type AtualizarMesaDTO = Partial<CriarMesaDTO> & { ocupada?: boolean; cpf_cliente?: string }
 
-export interface ComandaItem {
-  produto_id: string
-  nome: string
-  preco: number
-  foto_base64: string | null
-  quantidade: number
-}
-
 export type StatusPedido = 'RECEBIDO' | 'EM_PREPARO' | 'PRONTO' | 'ENTREGUE'
 
 export interface Pedido {
@@ -170,15 +162,32 @@ export interface Pedido {
   total: number
   criado_em: string
   atualizado_em: string
-  itens: PedidoItem[]
+  itens: ItemPedido[]
   mesa: { id: string; numero: string }
 }
 
-export interface PedidoItem {
+export interface ItemPedido {
   id: string
-  pedido_id: string
+  pedido_id?: string
   produto_id: string | null
   quantidade: number
   preco_unitario: number
   produto: { id: string; nome: string; foto_base64: string | null } | null
+}
+
+export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
+  RECEBIDO: 'Recebido',
+  EM_PREPARO: 'Em preparo',
+  PRONTO: 'Pronto',
+  ENTREGUE: 'Entregue',
+}
+
+export const STATUS_PEDIDO_ORDER: StatusPedido[] = ['RECEBIDO', 'EM_PREPARO', 'PRONTO', 'ENTREGUE']
+
+export interface ComandaItem {
+  produto_id: string
+  nome: string
+  preco: number
+  foto_base64: string | null
+  quantidade: number
 }

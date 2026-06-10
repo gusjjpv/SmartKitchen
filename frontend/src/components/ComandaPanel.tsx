@@ -29,7 +29,7 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
       {!aberto && itens.length > 0 && (
         <button
           onClick={() => setAberto(true)}
-          className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
+          className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 animate-fade-in bottom-[calc(1rem+env(safe-area-inset-bottom))]"
         >
           <div className="flex items-center gap-3 rounded-full border border-border/50 bg-card px-5 py-3 shadow-lg backdrop-blur-xl transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95">
             <div className="relative">
@@ -51,7 +51,7 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
       >
         <div
           data-state={aberto ? 'open' : 'closed'}
-          className="mt-auto flex max-h-[80vh] flex-col rounded-t-2xl border border-border/50 bg-card shadow-xl data-[state=closed]:translate-y-full data-[state=open]:translate-y-0 transition-transform duration-300 ease-out"
+          className="mt-auto flex max-h-[80vh] flex-col rounded-t-2xl border border-border/50 bg-card shadow-xl data-[state=closed]:translate-y-full data-[state=open]:translate-y-0 transition-transform duration-300 ease-out pb-[env(safe-area-inset-bottom)]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between border-b border-border/50 px-5 py-4">
@@ -75,6 +75,7 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
               <button
                 onClick={() => setAberto(false)}
                 className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/50 transition-colors hover:bg-muted/50 hover:text-foreground"
+                aria-label="Fechar comanda"
               >
                 <X className="size-4" />
               </button>
@@ -116,26 +117,28 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => atualizarQuantidade(item.produto_id, -1)}
-                        className="flex size-7 items-center justify-center rounded-md border border-border/30 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                        className="flex size-8 items-center justify-center rounded-md border border-border/30 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
                         disabled={item.quantidade <= 1}
+                        aria-label="Diminuir quantidade"
                       >
-                        <Minus className="size-3" />
+                        <Minus className="size-3.5" />
                       </button>
-                      <span className="flex w-7 items-center justify-center text-sm font-semibold text-foreground">
+                      <span className="flex w-8 items-center justify-center text-sm font-semibold text-foreground">
                         {item.quantidade}
                       </span>
                       <button
                         onClick={() => atualizarQuantidade(item.produto_id, 1)}
-                        className="flex size-7 items-center justify-center rounded-md border border-border/30 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                        className="flex size-8 items-center justify-center rounded-md border border-border/30 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                        aria-label="Aumentar quantidade"
                       >
-                        <Plus className="size-3" />
+                        <Plus className="size-3.5" />
                       </button>
                     </div>
 
-                    <div className="w-16 text-right">
+                    <div className="w-20 text-right">
                       <p className="text-sm font-bold text-foreground">
                         {formatarPreco(item.preco * item.quantidade)}
                       </p>
@@ -143,7 +146,8 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
 
                     <button
                       onClick={() => remover(item.produto_id)}
-                      className="flex size-7 items-center justify-center rounded-md text-muted-foreground/40 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                      className="flex size-8 items-center justify-center rounded-md text-muted-foreground/40 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                      aria-label={`Remover ${item.nome}`}
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -160,8 +164,12 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
                   onClick={async () => {
                     setEnviando(true)
                     try {
-                      await confirmarPedido(restauranteId, mesaId)
-                      navigate(`/cardapio/${slug}/pedido-confirmado?mesa=${mesa}`)
+                      const pedido = await confirmarPedido(restauranteId, mesaId) as { id: string }
+                      localStorage.setItem(`ultimo_pedido_${slug}_${mesa}`, JSON.stringify({
+                        id: pedido.id,
+                        restaurante_id: restauranteId,
+                      }))
+                      navigate(`/cardapio/${slug}/pedido-confirmado?mesa=${mesa}&pedido_id=${pedido.id}&restaurante_id=${restauranteId}`)
                     } catch {
                       toast.error('Erro ao enviar pedido. Verifique sua conexão e tente novamente.')
                     } finally {
@@ -169,7 +177,7 @@ export function ComandaPanel({ restauranteId, mesaId }: ComandaPanelProps) {
                     }
                   }}
                   disabled={enviando || itens.length === 0}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-laranja py-3 text-sm font-bold text-white shadow-lg shadow-laranja/20 transition-all duration-200 hover:bg-laranja/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-laranja py-3 text-sm font-bold text-white shadow-lg shadow-laranja/20 transition-all duration-200 hover:bg-laranja/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {enviando ? (
                     <>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useListarCategorias, useCriarCategoria, useAtualizarCategoria, useDeletarCategoria, useListarProdutos, useCriarProduto, useAtualizarProduto, useDeletarProduto } from '@/hooks/useCardapio'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
@@ -60,10 +61,10 @@ function CategoriaRow({
       >
         <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome" className="h-8 text-xs" />
         <Input value={ordem} onChange={(e) => setOrdem(e.target.value)} type="number" placeholder="Ordem" className="h-8 w-16 text-xs" />
-        <Button size="icon" variant="ghost" className="size-7" disabled={saving} onClick={async () => { setSaving(true); await onSalvar(nome, Number(ordem)); setSaving(false) }}>
+        <Button size="icon" variant="ghost" className="size-7" disabled={saving} onClick={async () => { setSaving(true); await onSalvar(nome, Number(ordem)); setSaving(false) }} aria-label="Salvar categoria">
           {saving ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3 text-verde" />}
         </Button>
-        <Button size="icon" variant="ghost" className="size-7" onClick={onCancelar}>
+        <Button size="icon" variant="ghost" className="size-7" onClick={onCancelar} aria-label="Cancelar edição">
           <X className="size-3" />
         </Button>
       </div>
@@ -86,10 +87,10 @@ function CategoriaRow({
       {!categoria.ativo && (
         <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] text-destructive">Inativo</span>
       )}
-      <button type="button" onClick={(e) => { e.stopPropagation(); onEditar() }} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
+      <button type="button" onClick={(e) => { e.stopPropagation(); onEditar() }} className="p-1 text-muted-foreground hover:text-foreground transition-colors" aria-label={`Editar ${categoria.nome}`}>
         <Pencil className="size-3" />
       </button>
-      <button type="button" onClick={(e) => { e.stopPropagation(); onExcluir() }} className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+      <button type="button" onClick={(e) => { e.stopPropagation(); onExcluir() }} className="p-1 text-muted-foreground hover:text-destructive transition-colors" aria-label={`Excluir ${categoria.nome}`}>
         <Trash2 className="size-3" />
       </button>
     </button>
@@ -135,10 +136,10 @@ function ProdutoCard({
             <div className="mt-1.5 flex items-center justify-between">
               <span className="text-sm font-bold text-laranja">{formatarPreco(produto.preco)}</span>
               <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button size="icon" variant="ghost" className="size-7" onClick={onEditar}>
+                <Button size="icon" variant="ghost" className="size-7" onClick={onEditar} aria-label={`Editar ${produto.nome}`}>
                   <Pencil className="size-3" />
                 </Button>
-                <Button size="icon" variant="ghost" className="size-7 text-muted-foreground hover:text-destructive" onClick={onExcluir}>
+                <Button size="icon" variant="ghost" className="size-7 text-muted-foreground hover:text-destructive" onClick={onExcluir} aria-label={`Excluir ${produto.nome}`}>
                   <Trash2 className="size-3" />
                 </Button>
               </div>
@@ -199,7 +200,7 @@ function ProdutoForm({
               <Label className="text-xs text-muted-foreground">Categoria *</Label>
               <Select value={categoriaId} onValueChange={setCategoriaId}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue />
+                  <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
                   {categorias.filter(c => c.ativo).map((c) => (
@@ -218,7 +219,7 @@ function ProdutoForm({
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Preço *</Label>
-              <Input value={preco} onChange={(e) => setPreco(e.target.value)} type="number" step="0.01" min="0" placeholder="0,00" className="h-8 text-xs" />
+              <CurrencyInput value={preco} onChange={setPreco} placeholder="0,00" className="h-8 text-xs" />
             </div>
             <div className="flex items-end gap-2">
               <div className="flex-1 space-y-1">
@@ -234,7 +235,7 @@ function ProdutoForm({
                 />
               </div>
               {fotoBase64 && (
-                <Button type="button" variant="ghost" size="icon" className="mb-0.5 size-8" onClick={() => setFotoBase64(null)}>
+                <Button type="button" variant="ghost" size="icon" className="mb-0.5 size-8" onClick={() => setFotoBase64(null)} aria-label="Remover foto">
                   <X className="size-3" />
                 </Button>
               )}
@@ -281,7 +282,7 @@ export function CardapioEditor({ restauranteId }: CardapioEditorProps) {
 
   if (loadingCategorias) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
         <div className="size-6 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
       </div>
     )
@@ -361,10 +362,10 @@ export function CardapioEditor({ restauranteId }: CardapioEditorProps) {
           <div className="mb-3 flex items-center gap-2 rounded-lg border border-dashed border-laranja/20 bg-laranja/[0.02] p-2.5">
             <Input value={novaCatNome} onChange={(e) => setNovaCatNome(e.target.value)} placeholder="Nome da categoria" className="h-8 text-xs" autoFocus />
             <Input value={novaCatOrdem} onChange={(e) => setNovaCatOrdem(e.target.value)} type="number" placeholder="Ordem" className="h-8 w-16 text-xs" />
-            <Button size="icon" variant="ghost" className="size-7" onClick={handleCriarCategoria} disabled={criarCategoria.isPending}>
+            <Button size="icon" variant="ghost" className="size-7" onClick={handleCriarCategoria} disabled={criarCategoria.isPending} aria-label="Criar categoria">
               {criarCategoria.isPending ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3 text-verde" />}
             </Button>
-            <Button size="icon" variant="ghost" className="size-7" onClick={() => setMostrarNovaCategoria(false)}>
+            <Button size="icon" variant="ghost" className="size-7" onClick={() => setMostrarNovaCategoria(false)} aria-label="Cancelar">
               <X className="size-3" />
             </Button>
           </div>
@@ -419,7 +420,7 @@ export function CardapioEditor({ restauranteId }: CardapioEditorProps) {
           )}
 
           {loadingProdutos ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-8" role="status" aria-live="polite">
               <div className="size-5 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
             </div>
           ) : (produtos ?? []).length === 0 ? (

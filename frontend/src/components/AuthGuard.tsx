@@ -9,7 +9,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background" role="status" aria-live="polite">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <div className="size-12 rounded-full border-2 border-laranja/20 border-t-laranja animate-spin" />
