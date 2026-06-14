@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { HorarioFuncionamentoService } from "../services/HorarioFuncionamentoService.js";
-import { prisma } from "../config/prisma.js";
+import { HorarioFuncionamentoService } from "../../src/services/HorarioFuncionamentoService.js";
+import { prisma } from "../../src/config/prisma.js";
 
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     horarioFuncionamento: {
       findMany: vi.fn(),

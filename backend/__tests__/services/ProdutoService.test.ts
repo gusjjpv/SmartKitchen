@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ProdutoService } from "../services/ProdutoService.js";
-import { prisma } from "../config/prisma.js";
-import { NotFoundError, ValidationError } from "../errors/AppError.js";
+import { ProdutoService } from "../../src/services/ProdutoService.js";
+import { prisma } from "../../src/config/prisma.js";
+import { NotFoundError, ValidationError } from "../../src/errors/AppError.js";
 
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     produto: {
       findMany: vi.fn(),

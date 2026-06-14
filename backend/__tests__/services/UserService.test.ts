@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { UsuarioService } from "../services/Userservice.js"; // Importa a classe real: UsuarioService
-import { prisma } from "../config/prisma.js";
+import { UsuarioService } from "../../src/services/Userservice.js";
+import { prisma } from "../../src/config/prisma.js";
 
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     usuario: {
       create: vi.fn(),
