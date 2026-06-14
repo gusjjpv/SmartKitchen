@@ -2,19 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
-// 1. MOCK CRUCIAL: Impede o Vitest de tentar importar o tailwind-merge que está quebrando
 vi.mock('@/lib/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }))
 
-// 2. Mock das ferramentas de navegação e links do React Router
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
   Link: ({ children, to }: any) => <a href={to}>{children}</a>,
 }))
 
-// 3. Mock do hook de autenticação e da função de login
 const mockLogin = vi.fn()
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: () => ({
@@ -22,7 +19,7 @@ vi.mock('@/hooks/useAuth', () => ({
   }),
 }))
 
-import { LoginPage } from '../../src/features/auth/pages/LoginPage'
+import { LoginPage } from '../../../../src/features/auth/pages/LoginPage'
 
 describe('LoginPage Component', () => {
   beforeEach(() => {
@@ -32,15 +29,12 @@ describe('LoginPage Component', () => {
   it('1. Caso de Teste: Deve renderizar o formulário de login com todos os elementos essenciais', () => {
     render(<LoginPage />)
 
-    // Valida títulos e textos de identificação da marca
     expect(screen.getByText('SmartKitchen')).toBeInTheDocument()
     expect(screen.getByText('Faça login para gerenciar seu restaurante')).toBeInTheDocument()
 
-    // Verifica se os campos de entrada estão visíveis
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/senha/i)).toBeInTheDocument()
 
-    // Verifica o botão de submissão e o link de cadastro
     expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument()
     expect(screen.getByText('Cadastre-se')).toBeInTheDocument()
   })
@@ -49,13 +43,13 @@ describe('LoginPage Component', () => {
     render(<LoginPage />)
 
     const botaoEntrar = screen.getByRole('button', { name: /entrar/i })
-    
+
     fireEvent.click(botaoEntrar)
 
     const alertaErro = await screen.findByRole('alert')
     expect(alertaErro).toBeInTheDocument()
     expect(alertaErro.textContent).toBe('Preencha todos os campos')
-    
+
     expect(mockLogin).not.toHaveBeenCalled()
   })
 
@@ -70,7 +64,7 @@ describe('LoginPage Component', () => {
 
     fireEvent.change(inputEmail, { target: { value: 'jessica@ufersa.edu.br' } })
     fireEvent.change(inputSenha, { target: { value: 'senhaSegura123' } })
-    
+
     fireEvent.click(botaoEntrar)
 
     await waitFor(() => {
@@ -93,13 +87,13 @@ describe('LoginPage Component', () => {
 
     fireEvent.change(inputEmail, { target: { value: 'errado@email.com' } })
     fireEvent.change(inputSenha, { target: { value: '123' } })
-    
+
     fireEvent.click(botaoEntrar)
 
     const alertaErro = await screen.findByRole('alert')
     expect(alertaErro).toBeInTheDocument()
     expect(alertaErro.textContent).toBe('Email ou senha inválidos')
-    
+
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 })
