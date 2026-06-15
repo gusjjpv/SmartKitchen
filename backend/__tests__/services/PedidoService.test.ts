@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { PedidoService } from "../services/PedidoService.js";
-import { prisma } from "../config/prisma.js";
-import { NotFoundError, ValidationError } from "../errors/AppError.js";
+import { PedidoService } from "../../src/services/PedidoService.js";
+import { prisma } from "../../src/config/prisma.js";
+import { NotFoundError, ValidationError } from "../../src/errors/AppError.js";
 
-// Mock global do Prisma para interceptar todas as operações de banco
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     mesa: {
       findUnique: vi.fn(),

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { MesaService } from "../services/MesaService.js";
-import { prisma } from "../config/prisma.js";
-import { NotFoundError, ConflictError } from "../errors/AppError.js";
+import { MesaService } from "../../src/services/MesaService.js";
+import { prisma } from "../../src/config/prisma.js";
+import { NotFoundError, ConflictError } from "../../src/errors/AppError.js";
 import QRCode from "qrcode";
 
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     mesa: {
       findMany: vi.fn(),

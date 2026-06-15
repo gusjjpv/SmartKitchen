@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { RestauranteService } from "../services/RestauranteService.js";
-import { prisma } from "../config/prisma.js";
+import { RestauranteService } from "../../src/services/RestauranteService.js";
+import { prisma } from "../../src/config/prisma.js";
 
-vi.mock("../config/prisma.js", () => ({
+vi.mock("../../src/config/prisma.js", () => ({
   prisma: {
     restaurante: {
       findMany: vi.fn(),
