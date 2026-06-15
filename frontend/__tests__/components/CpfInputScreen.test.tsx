@@ -2,8 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import React from 'react'
 
-// PULO DO GATO: Simula a função 'cn' para o Vitest não precisar ler o arquivo real
-// que depende do tailwind-merge. Isso resolve o erro de importação de vez!
 vi.mock('../../src/lib/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }))
