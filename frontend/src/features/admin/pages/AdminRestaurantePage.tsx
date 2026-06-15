@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -22,6 +22,16 @@ export function AdminRestaurantePage() {
 
   const [activeTab, setActiveTab] = useState('dados')
   const [criandoNovo, setCriandoNovo] = useState(false)
+
+  useEffect(() => {
+    if (activeTab !== 'dados') {
+      const timeout = setTimeout(() => {
+        const panel = document.querySelector('[role="tabpanel"][data-state="active"]')
+        if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 60)
+      return () => clearTimeout(timeout)
+    }
+  }, [activeTab])
 
   const urlId = searchParams.get('id')
   const restaurante = criandoNovo
@@ -148,7 +158,7 @@ export function AdminRestaurantePage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dados" forceMount className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="dados" forceMount className="mt-6 scroll-mt-24 transition-all duration-200 data-[state=inactive]:opacity-50">
           <DadosRestauranteForm
             key={restaurante?.id ?? 'new'}
             restaurante={restaurante}
@@ -157,17 +167,17 @@ export function AdminRestaurantePage() {
           />
         </TabsContent>
 
-        <TabsContent value="horarios" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="horarios" className="mt-6 scroll-mt-24 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <HorariosEditor restauranteId={restaurante.id} />}
         </TabsContent>
 
-        <TabsContent value="cardapio" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="cardapio" className="mt-6 scroll-mt-24 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <CardapioEditor restauranteId={restaurante.id} />}
         </TabsContent>
-        <TabsContent value="pedidos" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="pedidos" className="mt-6 scroll-mt-24 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <GerenciarPedidos restauranteId={restaurante.id} />}
         </TabsContent>
-        <TabsContent value="mesas" className="mt-6 transition-all duration-200 data-[state=inactive]:opacity-50">
+        <TabsContent value="mesas" className="mt-6 scroll-mt-24 transition-all duration-200 data-[state=inactive]:opacity-50">
           {restaurante && <GerenciarMesas restauranteId={restaurante.id} slug={restaurante.slug} />}
         </TabsContent>
       </Tabs>

@@ -1,32 +1,41 @@
 import { useState } from 'react'
-import { ScanLine, Smartphone, Loader2 } from 'lucide-react'
+import { ScanLine, Smartphone, Loader2, AlertCircle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { formatarCpf, validarDigitosCPF } from '@/lib/validators'
 
 interface CpfInputScreenProps {
   onConfirm: (cpf: string) => Promise<void>
 }
 
-function formatarCpf(valor: string) {
-  const digits = valor.replace(/\D/g, '').slice(0, 11)
-  return digits
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-}
-
 export function CpfInputScreen({ onConfirm }: CpfInputScreenProps) {
   const [raw, setRaw] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const digits = raw.replace(/\D/g, '').slice(0, 11)
-  const valido = digits.length === 11
+  const digitosCompletos = digits.length === 11
+  const cpfValido = digitosCompletos && validarDigitosCPF(digits)
 
   async function handleSubmit() {
-    if (!valido || loading) return
+    if (loading) return
+    setError('')
+
+    if (!digitosCompletos) {
+      setError('Digite o CPF completo')
+      return
+    }
+
+    if (!cpfValido) {
+      setError('CPF inválido')
+      return
+    }
+
     setLoading(true)
     try {
       await onConfirm(digits)
+    } catch {
+      setError('Erro ao confirmar CPF')
     } finally {
       setLoading(false)
     }
@@ -47,18 +56,33 @@ export function CpfInputScreen({ onConfirm }: CpfInputScreenProps) {
         </p>
 
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className="mt-8 space-y-4">
-          <Input
-            value={formatarCpf(raw)}
-            onChange={(e) => setRaw(e.target.value)}
-            placeholder="000.000.000-00"
-            maxLength={14}
-            inputMode="numeric"
-            autoFocus
-            className="text-center text-lg font-bold tracking-widest"
-          />
+          <div>
+            <Input
+              value={formatarCpf(raw)}
+              onChange={(e) => {
+                setRaw(e.target.value)
+                if (error) setError('')
+              }}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              inputMode="numeric"
+              autoFocus
+              className={`text-center text-lg font-bold tracking-widest ${
+                error ? 'border-destructive/50 ring-destructive/20' : ''
+              }`}
+              aria-invalid={!!error}
+              aria-describedby={error ? 'cpf-error' : undefined}
+            />
+            {error && (
+              <p id="cpf-error" role="alert" className="mt-1.5 flex items-center justify-center gap-1 text-xs text-destructive">
+                <AlertCircle className="size-3" />
+                {error}
+              </p>
+            )}
+          </div>
           <Button
             type="submit"
-            disabled={!valido || loading}
+            disabled={!digitosCompletos || loading}
             className="w-full"
           >
             {loading ? (
