@@ -8,15 +8,19 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { LogoUpload } from './LogoUpload'
 import type { Restaurante } from '@/types'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Save, Building2, MapPin, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { validarTelefone } from '@/lib/validators'
 
 const restauranteSchema = z.object({
   admin_usuario_id: z.string().min(1, 'Admin é obrigatório'),
   nome: z.string().min(1, 'Nome é obrigatório'),
   descricao: z.string().optional(),
-  whatsapp: z.string().min(10, 'WhatsApp inválido'),
+  whatsapp: z
+    .string()
+    .min(10, 'WhatsApp inválido')
+    .refine((v) => validarTelefone(v), 'Formato: +55 (DD) XXXXX-XXXX'),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
   rua: z.string().min(1, 'Rua é obrigatória'),
   numero: z.string().min(1, 'Número é obrigatório'),

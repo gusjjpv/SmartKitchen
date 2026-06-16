@@ -16,7 +16,7 @@ interface DiaHorarioState {
   dia_semana: number
   horario_abertura: string
   horario_fechamento: string
-  fechado: boolean
+  aberto: boolean
 }
 
 function buildInitialState(horarios: HorarioFuncionamento[] | undefined): DiaHorarioState[] {
@@ -26,7 +26,7 @@ function buildInitialState(horarios: HorarioFuncionamento[] | undefined): DiaHor
       dia_semana: idx,
       horario_abertura: existing?.horario_abertura ?? '',
       horario_fechamento: existing?.horario_fechamento ?? '',
-      fechado: existing?.fechado ?? false,
+      aberto: existing ? !existing.fechado : false,
     }
   })
 }
@@ -55,23 +55,24 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
     try {
       const existing = horarios?.find((h) => h.dia_semana === dia.dia_semana)
 
+      const fechado = !dia.aberto
       if (existing) {
         await atualizarMutation.mutateAsync({
           restauranteId,
           diaSemana: dia.dia_semana,
           dto: {
-            horario_abertura: dia.fechado ? undefined : dia.horario_abertura || undefined,
-            horario_fechamento: dia.fechado ? undefined : dia.horario_fechamento || undefined,
-            fechado: dia.fechado,
+            horario_abertura: fechado ? undefined : dia.horario_abertura || undefined,
+            horario_fechamento: fechado ? undefined : dia.horario_fechamento || undefined,
+            fechado,
           },
         })
       } else {
         await criarMutation.mutateAsync({
           restaurante_id: restauranteId,
           dia_semana: dia.dia_semana,
-          horario_abertura: dia.fechado ? undefined : dia.horario_abertura || undefined,
-          horario_fechamento: dia.fechado ? undefined : dia.horario_fechamento || undefined,
-          fechado: dia.fechado,
+          horario_abertura: fechado ? undefined : dia.horario_abertura || undefined,
+          horario_fechamento: fechado ? undefined : dia.horario_fechamento || undefined,
+          fechado,
         })
       }
     } finally {
@@ -104,29 +105,31 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
 
       {dias.map((dia) => {
         const isSaving = savingDia === dia.dia_semana
-        const isChanged = dia.fechado !== (horarios?.find((h) => h.dia_semana === dia.dia_semana)?.fechado ?? false)
-          || dia.horario_abertura !== (horarios?.find((h) => h.dia_semana === dia.dia_semana)?.horario_abertura ?? '')
-          || dia.horario_fechamento !== (horarios?.find((h) => h.dia_semana === dia.dia_semana)?.horario_fechamento ?? '')
+        const original = horarios?.find((h) => h.dia_semana === dia.dia_semana)
+        const originalAberto = original ? !original.fechado : false
+        const isChanged = dia.aberto !== originalAberto
+          || dia.horario_abertura !== (original?.horario_abertura ?? '')
+          || dia.horario_fechamento !== (original?.horario_fechamento ?? '')
 
         return (
           <Card key={dia.dia_semana} className="border border-border/50 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-200 hover:border-laranja/20 hover:shadow-md hover:-translate-y-0.5">
             <CardContent className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4 p-4 sm:p-5">
               <div className="flex min-w-[8rem] items-center gap-2.5">
-                <div className={`size-2.5 rounded-full ${dia.fechado ? 'bg-destructive' : 'bg-verde'}`} />
+                <div className={`size-2.5 rounded-full ${dia.aberto ? 'bg-verde' : 'bg-destructive'}`} />
                 <span className="text-sm font-medium text-foreground">{DIAS_SEMANA[dia.dia_semana]}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Checkbox
-                  id={`fechado-${dia.dia_semana}`}
-                  checked={dia.fechado}
+                  id={`aberto-${dia.dia_semana}`}
+                  checked={dia.aberto}
                   onCheckedChange={(checked) =>
-                    updateDia(dia.dia_semana, { fechado: checked === true })
+                    updateDia(dia.dia_semana, { aberto: checked === true })
                   }
                   className="data-[state=checked]:bg-verde data-[state=checked]:border-verde"
                 />
-                <Label htmlFor={`fechado-${dia.dia_semana}`} className="text-sm text-muted-foreground">
-                  Fechado
+                <Label htmlFor={`aberto-${dia.dia_semana}`} className="text-sm text-muted-foreground">
+                  Aberto
                 </Label>
               </div>
 
@@ -135,7 +138,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
                   type="time"
                   value={dia.horario_abertura}
                   onChange={(e) => updateDia(dia.dia_semana, { horario_abertura: e.target.value })}
-                  disabled={dia.fechado}
+                  disabled={!dia.aberto}
                   className="w-28 sm:w-32 h-8 text-xs"
                 />
                 <span className="text-muted-foreground text-xs">até</span>
@@ -143,7 +146,7 @@ export function HorariosEditor({ restauranteId }: HorariosEditorProps) {
                   type="time"
                   value={dia.horario_fechamento}
                   onChange={(e) => updateDia(dia.dia_semana, { horario_fechamento: e.target.value })}
-                  disabled={dia.fechado}
+                  disabled={!dia.aberto}
                   className="w-28 sm:w-32 h-8 text-xs"
                 />
               </div>
