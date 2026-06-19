@@ -32,29 +32,41 @@ Clientes escaneiam o QR Code da mesa, acessam o cardápio, montam sua comanda e 
 ```
 SmartKitchen/
 ├── backend/
+│   ├── __tests__/
+│   │   └── services/              # Testes unitários dos services (Vitest)
 │   ├── prisma/
-│   │   └── schema.prisma          # Schema do banco de dados
+│   │   └── schema.prisma
 │   ├── src/
-│   │   ├── config/                # Configurações (Prisma client)
-│   │   ├── controllers/           # Controllers Express (REST)
-│   │   ├── errors/                # Classes de erro customizadas
-│   │   ├── routes/                # Rotas da API
-│   │   ├── services/              # Lógica de negócio
-│   │   └── server.ts              # Entry point do servidor
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── errors/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.ts
+│   ├── vitest.config.ts
 │   └── package.json
 │
 ├── frontend/
-│   └── src/
-│       ├── api/                   # Módulos de chamadas HTTP (axios)
-│       ├── components/            # Componentes reutilizáveis (UI)
-│       ├── contexts/              # React Contexts (Auth, Comanda, Mesa, Tema)
-│       ├── features/
-│       │   ├── admin/             # Painel administrativo (Restaurantes, Cardápio, Mesas, Pedidos)
-│       │   ├── auth/              # Login e Cadastro
-│       │   └── cardapio/          # Cardápio público (acesso via QR Code)
-│       ├── hooks/                 # Custom hooks (useQuery / useMutation)
-│       ├── types/                 # Definições TypeScript
-│       └── App.tsx                # Rotas da aplicação
+│   ├── __tests__/
+│   │   ├── api/                   # Testes das chamadas HTTP
+│   │   ├── components/            # Testes de componentes React
+│   │   ├── contexts/              # Testes de React Contexts
+│   │   └── features/
+│   │       └── auth/
+│   │           └── pages/         # Testes de páginas
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   ├── features/
+│   │   │   ├── admin/
+│   │   │   ├── auth/
+│   │   │   └── cardapio/
+│   │   ├── hooks/
+│   │   ├── types/
+│   │   └── App.tsx
+│   ├── test-setup.ts
+│   ├── vitest.config.ts
 │   └── package.json
 │
 └── README.md
